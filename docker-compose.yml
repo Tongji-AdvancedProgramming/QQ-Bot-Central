@@ -1,0 +1,52 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper_data:/data
+    networks:
+      - botnet
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client
+    ports:
+      - "9900:9900"
+    depends_on:
+      - gateway
+    networks:
+      - botnet
+
+
+  demo:
+    build:
+      context: ./services/demoservice-sayhelloworld
+      dockerfile: Dockerfile
+    container_name: demo-service
+    ports:
+      - "9901:9901"
+    depends_on:
+      - zookeeper
+    networks:
+      - botnet
+
+  gateway:
+    build:
+      context: ./services/gateway-service
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - "9902:9902"
+    depends_on:
+      - demo
+    networks:
+      - botnet
+
+networks:
+  botnet:
+
