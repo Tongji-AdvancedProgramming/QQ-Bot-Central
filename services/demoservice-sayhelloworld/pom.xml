@@ -18,12 +18,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.tongji.programming</groupId>
-            <version>${project.version}</version>
-            <artifactId>services</artifactId>
-            <scope>import</scope>
-        </dependency>
     </dependencies>
 
 </project>
