@@ -1,2 +1,39 @@
-# QQ-Bot-Central
-The central service of QQ Bot. You should develop new side-services based on this framework.
+# 高程微服务QQ Bot项目
+
+借助Apache Dubbo的高性能RPC框架，以最佳实践赋能高程bot高效运行（？）
+
+- Q：为什么不用Python？
+- A：作为堂堂985的码类学生，不用微服务怎么和其他同学拉开差距？（笑）——其实上面是开玩笑的，真正的原因是高程的bot具有功能多、结构复杂的特点，用Python写一不小心就写成大屎山了，实在是很不优雅。
+
+## 开发
+
+你可以选一个感兴趣的功能或者service，为它添砖加瓦。但是一般不建议新开太多service——每个人一般来讲一两个就够了。
+
+### 你可以学到什么？
+
+比Python更有营养的开发经验。如果说你用Python写的Flask小应用像限速八十的教练车的话，这里的Dubbo框架就是货真价实的轿车（甚至赛车）了。
+
+### 你需要预先学习和了解的
+
+- 至少得会用Flask之类的简单框架写点小HTTP程序
+
+### 你不需要提前学过的
+
+- Java（是的，不会Java完全可以当场学）
+- 项目用到的各种框架（你只需要照葫芦画瓢就可以了，当然，能研究一下它运行的原理就更好了）
+
+## 开发前准备
+
+项目目前采用docker compose管理docker集群——当然，在自己的电脑上做开发的话完全不需要使用docker。
+
+推荐：在开发期间使用Intellij IDEA的服务管理工具管理Spring Boot服务。（右键点击启动类就能看到“运行”按钮了）。
+
+请下载一个go-cqhttp，部署在你电脑上并想办法搞定登录（搞不定再来找我）。然后，打开配置文件里的HTTP上报功能（最下面那个被注释掉的POST选项），把它的地址改成localhost:9900就可以了。
+
+接下来，下载一个zookeeper到电脑上，开发期间双击挂后台运行。
+
+然后目前就没有注意事项了。
+
+## 开发要求
+
+Fork并Clone项目到你的电脑上开发，完成开发之后通过Pull Request提交。建议去下载几本介绍Git和GitHub的书了解一下怎么参与开源项目开发。

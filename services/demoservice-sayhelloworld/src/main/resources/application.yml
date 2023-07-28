@@ -1,0 +1,11 @@
+dubbo:
+  application:
+    name: qq-bot-service-sayHelloworld
+    logger: slf4j
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: zookeeper://${zookeeper.address:127.0.0.1}:2181
+server:
+  port: 9901
