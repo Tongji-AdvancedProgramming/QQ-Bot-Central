@@ -11,3 +11,10 @@ server:
   port: 9902
 zookeeper:
   address: zookeeper
+bot:
+  group:
+    test:
+      - 271107067
+      - 738335397
+    normal:
+      - 773114957

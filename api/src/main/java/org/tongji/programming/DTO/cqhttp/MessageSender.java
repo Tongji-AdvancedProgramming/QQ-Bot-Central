@@ -1,10 +1,16 @@
 package org.tongji.programming.DTO.cqhttp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MessageSender {
     @JsonProperty("user_id")
-    private int userId;
+    private long userId;
 
     private String nickname;
 
@@ -13,7 +19,7 @@ public class MessageSender {
     private int age;
 
     @JsonProperty("group_id")
-    private int groupId;
+    private long groupId;
 
     private String card;
 

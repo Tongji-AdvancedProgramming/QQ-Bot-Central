@@ -27,13 +27,19 @@ public class MessageUniversalReport extends UniversalReport {
      * 消息 ID
      */
     @JsonProperty("message_id")
-    private String messageId;
+    private int messageId;
 
     /**
      * 发送者 QQ 号
      */
     @JsonProperty("user_id")
-    private String userId;
+    private long userId;
+
+    /**
+     * 来源 QQ 群
+     */
+    @JsonProperty("group_id")
+    private long groupId;
 
     /**
      * CQ 码格式的消息

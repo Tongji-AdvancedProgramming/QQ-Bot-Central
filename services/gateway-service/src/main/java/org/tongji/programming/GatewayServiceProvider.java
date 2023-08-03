@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableDubbo
 public class GatewayServiceProvider {
     public static void main(String[] args) {
+
         SpringApplication.run(GatewayServiceProvider.class, args);
     }
 }

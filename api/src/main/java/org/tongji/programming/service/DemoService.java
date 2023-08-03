@@ -6,4 +6,6 @@ public interface DemoService {
 
     String chiakiSayHello();
 
+    String djImage();
+
 }
