@@ -23,4 +23,11 @@ public class ChiakiController {
     public String dingZhen(MessageUniversalReport event){
         return demoService.djImage();
     }
+
+    @CommandMapping(value = "渣哥",minimumGroupLevel = GroupLevel.NORMAL)
+    public String shenJian(MessageUniversalReport event){
+        return demoService.sjImage(event);
+    }
+
+
 }

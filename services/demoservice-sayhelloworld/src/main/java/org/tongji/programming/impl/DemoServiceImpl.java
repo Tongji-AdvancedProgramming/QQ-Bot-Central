@@ -5,9 +5,12 @@ import lombok.var;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalResponse;
 import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.service.DemoService;
+
+import java.util.regex.Pattern;
 
 @DubboService
 public class DemoServiceImpl implements DemoService {
@@ -42,11 +45,33 @@ public class DemoServiceImpl implements DemoService {
         var mapper = JSONHelper.getLossyMapper();
         var response = new MessageUniversalResponse();
         response.setReply("[CQ:image,file=https://dingzhen.cinea.cc/get,cache=0]");
-        try{
+        try {
             return mapper.writeValueAsString(response);
         } catch (JsonProcessingException e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    static Pattern sjPattern = Pattern.compile("chiaki 渣哥 (.*)");
+
+    @Override
+    public String sjImage(MessageUniversalReport event) {
+        var message = event.getRawMessage();
+        var matcher = sjPattern.matcher(message);
+        if (matcher.find()) {
+            String index = matcher.group(1);
+            var mapper = JSONHelper.getLossyMapper();
+            var response = new MessageUniversalResponse();
+            response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=0]", index));
+            try {
+                return mapper.writeValueAsString(response);
+            } catch (JsonProcessingException e) {
+                logger.error(e.getMessage());
+                throw new RuntimeException(e);
+            }
+        } else {
+            return "{}";
         }
     }
 }

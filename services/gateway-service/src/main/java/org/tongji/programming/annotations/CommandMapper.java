@@ -155,7 +155,7 @@ public class CommandMapper implements ApplicationContextAware {
             if (content.startsWith(key)) {
                 var innerMap = textCommandMap.get(key);
                 for (var subKey : innerMap.keySet()) {
-                    if (content.regionMatches(true, key.length() + 1, subKey, 0, subKey.length())) {
+                    if (content.regionMatches(true, key.length() > 0 ? key.length() + 1 : 0, subKey, 0, subKey.length())) {
                         var config = innerMap.get(subKey);
                         if ((config.groupChatOnly && event.getMessageType().equals("private")) || (config.privateChatOnly && event.getMessageType().equals("group"))) {
                             continue;
