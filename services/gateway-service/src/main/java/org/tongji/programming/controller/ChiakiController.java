@@ -1,5 +1,6 @@
 package org.tongji.programming.controller;
 
+import lombok.var;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
@@ -24,9 +25,10 @@ public class ChiakiController {
         return demoService.djImage();
     }
 
-    @CommandMapping(value = "渣哥",minimumGroupLevel = GroupLevel.NORMAL)
+    @CommandMapping(value = "渣哥",minimumGroupLevel = GroupLevel.CAREFUL)
     public String shenJian(MessageUniversalReport event){
-        return demoService.sjImage(event);
+        var res =  demoService.sjImage(event);
+        return res;
     }
 
 

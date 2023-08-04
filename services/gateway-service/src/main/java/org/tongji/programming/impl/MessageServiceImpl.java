@@ -59,6 +59,7 @@ public class MessageServiceImpl implements MessageService {
 
             return commandMapper.handleCommand(event);
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }

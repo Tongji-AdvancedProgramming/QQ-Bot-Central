@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MessageUniversalReport extends UniversalReport {
+public class MessageUniversalReport extends UniversalReport implements Serializable {
     /**
      * 消息类型（private, group）
      */
