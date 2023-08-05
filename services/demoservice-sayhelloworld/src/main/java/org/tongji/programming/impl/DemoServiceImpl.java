@@ -61,9 +61,14 @@ public class DemoServiceImpl implements DemoService {
         var matcher = sjPattern.matcher(message);
         if (matcher.find()) {
             String index = matcher.group(1);
+            boolean noCache = false;
+            if(index.endsWith("nocache")){
+                index = index.substring(0,index.length()-7);
+                noCache = true;
+            }
             var mapper = JSONHelper.getLossyMapper();
             var response = new MessageUniversalResponse();
-            if(index.equals("随机") || index.equals("list"))
+            if(index.equals("随机") || noCache)
                 response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=0]", index));
             else
                 response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=1]", index));
