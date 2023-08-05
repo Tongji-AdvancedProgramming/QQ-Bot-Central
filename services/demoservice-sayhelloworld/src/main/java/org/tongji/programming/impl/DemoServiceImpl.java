@@ -63,7 +63,10 @@ public class DemoServiceImpl implements DemoService {
             String index = matcher.group(1);
             var mapper = JSONHelper.getLossyMapper();
             var response = new MessageUniversalResponse();
-            response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=0]", index));
+            if(index.equals("随机"))
+                response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=0]", index));
+            else
+                response.setReply(String.format("[CQ:image,file=https://shenjian.cinea.cc/get?index=%s,cache=1]", index));
             try {
                 return mapper.writeValueAsString(response);
             } catch (JsonProcessingException e) {
