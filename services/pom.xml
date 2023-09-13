@@ -16,6 +16,7 @@
     <modules>
         <module>demoservice-sayhelloworld</module>
         <module>gateway-service</module>
+        <module>helloworld-service</module>
     </modules>
 
     <properties>

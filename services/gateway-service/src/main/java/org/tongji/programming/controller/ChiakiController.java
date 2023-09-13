@@ -16,19 +16,18 @@ public class ChiakiController {
     DemoService demoService;
 
     @CommandMapping("hello")
-    public String hello(MessageUniversalReport event){
+    public String hello(MessageUniversalReport event) {
         return demoService.chiakiSayHello();
     }
 
-    @CommandMapping(value = "dj",minimumGroupLevel = GroupLevel.NORMAL)
-    public String dingZhen(MessageUniversalReport event){
+    @CommandMapping(value = "dj", minimumGroupLevel = GroupLevel.NORMAL)
+    public String dingZhen(MessageUniversalReport event) {
         return demoService.djImage();
     }
 
-    @CommandMapping(value = "渣哥",minimumGroupLevel = GroupLevel.CAREFUL)
-    public String shenJian(MessageUniversalReport event){
-        var res =  demoService.sjImage(event);
-        return res;
+    @CommandMapping(value = "渣哥", minimumGroupLevel = GroupLevel.CAREFUL)
+    public String shenJian(MessageUniversalReport event) {
+        return demoService.sjImage(event);
     }
 
 
