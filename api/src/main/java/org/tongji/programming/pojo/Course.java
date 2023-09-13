@@ -6,14 +6,14 @@ import lombok.Data;
  * 班级Pojo
  */
 @Data
-public class Class {
+public class Course {
     /**
      * 课号
      */
-    private String classNo;
+    private String id;
 
     /**
      * 课程名称
      */
-    private String className;
+    private String name;
 }

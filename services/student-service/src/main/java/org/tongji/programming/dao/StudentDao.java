@@ -32,22 +32,22 @@ public interface StudentDao {
     /**
      * 根据学号和课号查询
      * @param id 学号
-     * @param classNo 课号
+     * @param courseId 课号
      * @return 学生
      */
-    Student selectById(Integer id, Integer classNo);
+    Student selectById(String id, String courseId);
 
     /**
      * 根据学号和课号删除学生
      * @param id 学号
-     * @param classNo 课号
+     * @param courseId 课号
      * @return 0表示成功，其余失败
      */
-    Integer deleteById(Integer id, Integer classNo);
+    Integer deleteById(String id, String courseId);
 
     /**
      * 删除某个班级的所有学生
      * @return 0表示成功，其余失败
      */
-    Integer deleteByClassNo(Integer classNo);
+    Integer deleteByClassNo(String courseId);
 }

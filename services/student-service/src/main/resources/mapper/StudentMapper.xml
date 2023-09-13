@@ -13,8 +13,9 @@
             `stuNo` VARCHAR(10) NOT NULL,
             `major` VARCHAR(10) NOT NULL,
             `name` VARCHAR(30) NOT NULL,
-            `classId` VARCHAR(15) NOT NULL,
-            PRIMARY KEY (`stuNo`,`classId`)
+            `courseId` VARCHAR(15) NOT NULL,
+            PRIMARY KEY (`stuNo`,`courseId`),
+            FOREIGN KEY (`courseId`) REFERENCES `Course` (`id`)
         )
     </update>
 </mapper>

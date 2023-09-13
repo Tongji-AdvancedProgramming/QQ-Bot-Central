@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.dao.CourseDao">
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS `Course` (
+            `id` VARCHAR(10) NOT NULL PRIMARY KEY,
+            `name` VARCHAR(10) NOT NULL
+        )
+    </update>
+
+    <update id="deleteTable">
+        DROP TABLE `Course`
+    </update>
+
+    <select id="selectAll" resultType="org.tongji.programming.pojo.Course">
+        SELECT * FROM `Course`
+    </select>
+
+    <select id="selectById" resultType="org.tongji.programming.pojo.Course">
+        SELECT * FROM `Course` WHERE id=#{id} LIMIT 1
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM Course WHERE id=#{id}
+    </delete>
+</mapper>
