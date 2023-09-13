@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.tongji.programming.dao.CourseDao">
+<mapper namespace="org.tongji.programming.mapper.CourseMapper">
     <update id="createTable">
         CREATE TABLE IF NOT EXISTS `Course` (
             `id` VARCHAR(10) NOT NULL PRIMARY KEY,

@@ -1,10 +1,15 @@
-package org.tongji.programming.dao;
+package org.tongji.programming.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 import org.tongji.programming.pojo.Student;
 
 import java.util.List;
 
-public interface StudentDao {
+@Mapper
+@Repository
+public interface StudentMapper {
     /**
      * 查询表是否存在
      * @return 是否存在
@@ -35,7 +40,7 @@ public interface StudentDao {
      * @param courseId 课号
      * @return 学生
      */
-    Student selectById(String id, String courseId);
+    Student selectById(@Param("id") String id, @Param("courseId") String courseId);
 
     /**
      * 根据学号和课号删除学生
@@ -43,11 +48,11 @@ public interface StudentDao {
      * @param courseId 课号
      * @return 0表示成功，其余失败
      */
-    Integer deleteById(String id, String courseId);
+    Integer deleteById(@Param("id") String id, @Param("courseId") String courseId);
 
     /**
      * 删除某个班级的所有学生
      * @return 0表示成功，其余失败
      */
-    Integer deleteByClassNo(String courseId);
+    Integer deleteByClassNo(@Param("courseId") String courseId);
 }

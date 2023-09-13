@@ -1,11 +1,14 @@
-package org.tongji.programming.dao;
+package org.tongji.programming.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 import org.tongji.programming.pojo.Course;
-import org.tongji.programming.pojo.Student;
 
 import java.util.List;
 
-public interface CourseDao {
+@Mapper
+@Repository
+public interface CourseMapper {
     /**
      * 建表
      * @return 0表示成功，其余失败
