@@ -1,5 +1,6 @@
 package org.tongji.programming.pojo;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * 主键是StuNo和ClassId
  */
 @Data
+@Builder
 public class Student {
     /**
      * 学号

@@ -4,6 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.tongji.programming.mapper.StudentMapper">
+    <insert id="insertStudent">
+        INSERT INTO Student (stuNo, major, name, courseId)
+        VALUES (#{student.stuNo},#{student.major},#{student.name},#{student.courseId})
+    </insert>
+
+    <insert id="insertStudents">
+        INSERT INTO Student (stuNo, major, name, courseId)
+        VALUES
+        <foreach collection="student" item="item" index="i" separator=",">
+            (#{item.stuNo}, #{item.major}, #{item.name}, #{item.courseId})
+        </foreach>
+    </insert>
+
     <delete id="deleteTable">
         DROP TABLE `Student`
     </delete>
@@ -26,6 +39,21 @@
 
     <select id="selectById" resultType="org.tongji.programming.pojo.Student">
         SELECT * FROM Student WHERE stuNo = #{id} AND courseId = #{courseId}
+    </select>
+
+    <select id="selectWithPage" resultType="org.tongji.programming.pojo.Student">
+        SELECT * FROM Student
+        ORDER BY stuNo
+        LIMIT #{pageSize}
+        OFFSET (#{pageNum}-1)*#{pageSize}
+    </select>
+
+    <select id="selectWithPagByCourse" resultType="org.tongji.programming.pojo.Student">
+        SELECT * FROM Student
+        WHERE courseId = #{courseId}
+        ORDER BY stuNo
+            LIMIT #{pageSize}
+        OFFSET (#{pageNum}-1)*#{pageSize}
     </select>
 
     <update id="createTable">

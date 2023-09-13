@@ -1,6 +1,7 @@
 package org.tongji.programming.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import org.tongji.programming.pojo.Course;
 
@@ -40,4 +41,10 @@ public interface CourseMapper {
      * @return 0表示成功，其余失败
      */
     Integer deleteById(String id);
+
+    /**
+     * 添加一个课程
+     * @return 1表示成功，其余失败
+     */
+    Integer insertCourse(@Param("course") Course course);
 }
