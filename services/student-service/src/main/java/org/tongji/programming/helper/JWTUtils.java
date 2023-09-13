@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.FatalBeanException;
 
 import java.util.Calendar;
 
@@ -19,7 +20,7 @@ public class JWTUtils {
         signKey = System.getenv("Bot_JwtKey");
         if (signKey == null) {
             log.error("未配置Bot_JwtKey，请检查环境变量");
-            System.exit(1);
+            throw new FatalBeanException("环境变量Bot_JwtKey未配置");
         }
     }
 

@@ -2,6 +2,8 @@ package org.tongji.programming.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
+import org.springframework.beans.FatalBeanException;
+import org.springframework.boot.web.server.Shutdown;
 import org.springframework.web.bind.annotation.*;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
@@ -14,15 +16,15 @@ public class UserController {
     public static final String adminPassword;
 
     static {
-        adminPassword = System.getenv("Bot_adminPass");
+        adminPassword = System.getenv("Bot_AdminPass");
         if (adminPassword == null) {
-            log.error("未配置Bot_adminPass，请检查环境变量");
-            System.exit(1);
+            log.error("未配置Bot_AdminPass，请检查环境变量");
+            throw new FatalBeanException("环境变量Bot_AdminPass未配置");
         }
     }
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
-    public APIResponse Login(@RequestParam String userName, @RequestParam String passWord){
+    public APIResponse Login(@RequestParam("username") String userName, @RequestParam("password") String passWord){
         if(userName.equals("admin") && passWord.equals(adminPassword)){
             var token = JWTUtils.getToken("admin");
             return APIDataResponse.Success(token);
