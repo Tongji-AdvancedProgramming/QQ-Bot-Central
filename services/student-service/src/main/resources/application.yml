@@ -1,0 +1,13 @@
+dubbo:
+  application:
+    name: qq-bot-student-service
+    logger: slf4j
+  protocol:
+    name: tri
+    port: -1
+  registry:
+    address: zookeeper://${zookeeper.address:127.0.0.1}:2181
+server:
+  port: 9905
+zookeeper:
+  address: zookeeper

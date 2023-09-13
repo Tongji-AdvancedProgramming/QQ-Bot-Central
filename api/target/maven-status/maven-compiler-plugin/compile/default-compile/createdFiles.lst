@@ -1,0 +1,9 @@
+org\tongji\programming\service\DemoService.class
+org\tongji\programming\service\MessageService.class
+org\tongji\programming\DTO\cqhttp\MessageUniversalResponse.class
+org\tongji\programming\service\GatewayService.class
+org\tongji\programming\helper\JSONHelper.class
+org\tongji\programming\DTO\cqhttp\MessageSender.class
+org\tongji\programming\DTO\cqhttp\NoticeUniversalReport.class
+org\tongji\programming\DTO\cqhttp\UniversalReport.class
+org\tongji\programming\DTO\cqhttp\MessageUniversalReport.class

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.dao.StudentDao">
+    <select id="tableExists" resultType="boolean">
+        SELECT count(*)>0 FROM sqlite_master WHERE type="table" AND name = "Student"
+    </select>
+
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS `Student` (
+            `stuNo` VARCHAR(10) NOT NULL,
+            `major` VARCHAR(10) NOT NULL,
+            `name` VARCHAR(30) NOT NULL,
+            `classId` VARCHAR(15) NOT NULL,
+            PRIMARY KEY (`stuNo`,`classId`)
+        )
+    </update>
+</mapper>
