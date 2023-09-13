@@ -26,14 +26,4 @@ public class CourseController {
         var result = courseMapper.selectAll();
         return APIDataResponse.Success(result);
     }
-
-    /**
-     * 导入学生名单
-     * @param file 目前打算支持CSV、TXT
-     * @return 无
-     */
-    @RequestMapping(value = "import", method = RequestMethod.POST)
-    public APIResponse Import(@RequestPart MultipartFile file){
-        return APIResponse.Fail("5000","还没写");
-    }
 }

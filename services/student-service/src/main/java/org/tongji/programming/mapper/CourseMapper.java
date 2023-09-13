@@ -31,7 +31,7 @@ public interface CourseMapper {
     /**
      * 根据课号查询
      * @param id 课程编号
-     * @return 学生
+     * @return 课程
      */
     Course selectById(String id);
 
