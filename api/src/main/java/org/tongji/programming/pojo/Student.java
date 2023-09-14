@@ -29,4 +29,9 @@ public class Student {
      * 课号
      */
     private String courseId;
+
+    /**
+     * 班号
+     */
+    private String classId;
 }

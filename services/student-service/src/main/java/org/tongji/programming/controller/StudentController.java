@@ -9,6 +9,9 @@ import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.mapper.CourseMapper;
 import org.tongji.programming.mapper.StudentMapper;
+import org.tongji.programming.service.StudentImportService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("student")
@@ -19,6 +22,9 @@ public class StudentController {
 
     @Autowired
     CourseMapper courseMapper;
+
+    @Autowired
+    StudentImportService studentImportService;
 
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse GetAllStudents(
@@ -39,17 +45,25 @@ public class StudentController {
      * @return 无
      */
     @RequestMapping(value = "import", method = RequestMethod.POST)
-    public APIResponse Import(@RequestPart("file") MultipartFile file, @RequestPart("course_id") String courseId) {
+    public APIResponse Import(@RequestPart("file") MultipartFile file, @RequestPart("course_id") String courseId, @RequestPart("class_id") String classId) throws IOException {
         var course = courseMapper.selectById(courseId);
         if (course == null) {
             return APIResponse.Fail("4001", "课号不存在，请先添加课程");
         }
 
-        if(file==null || file.isEmpty() || file.getSize()==0){
+        if (file == null || file.isEmpty() || file.getSize() == 0) {
             return APIResponse.Fail("4001", "上传的文件为空或不可读取");
         }
 
         var type = file.getContentType();
+        if (type == "text/plain") {
+            try {
+                var written = studentImportService.resolvePlainText(file.getInputStream(), courseId, classId);
+                return APIDataResponse.Success(written);
+            } catch (Exception e) {
+                return APIResponse.Fail("4000", e.getLocalizedMessage());
+            }
+        }
 
         return APIResponse.Fail("5000", "还没写");
     }
