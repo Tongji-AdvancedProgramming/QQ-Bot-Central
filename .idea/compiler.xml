@@ -8,11 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="client" />
-        <module name="student-service" />
         <module name="demoservice-sayhelloworld" />
         <module name="api" />
         <module name="helloworld-service" />
         <module name="gateway-service" />
+        <module name="backstage-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

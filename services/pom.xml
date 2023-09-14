@@ -17,7 +17,7 @@
         <module>demoservice-sayhelloworld</module>
         <module>gateway-service</module>
         <module>helloworld-service</module>
-        <module>student-service</module>
+        <module>backstage-service</module>
     </modules>
 
     <properties>
@@ -56,6 +56,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>2.1.1</version>
         </dependency>
     </dependencies>
 

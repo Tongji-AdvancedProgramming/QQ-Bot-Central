@@ -1,21 +1,17 @@
-package org.tongji.programming.pojo;
+package org.tongji.programming.dto.CourseService;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 班级Pojo
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Course {
+public class CourseWithGroup {
     /**
      * 课号
      */
@@ -25,4 +21,9 @@ public class Course {
      * 课程名称
      */
     private String name;
+
+    /**
+     * 群号列表
+     */
+    private List<String> groups;
 }

@@ -5,24 +5,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * 班级Pojo
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Course {
+public class QQGroup {
     /**
-     * 课号
+     * 群号
      */
     private String id;
 
     /**
-     * 课程名称
+     * 关联课号
      */
-    private String name;
+    private String courseId;
+
+    /**
+     * 备注
+     */
+    private String note;
 }
