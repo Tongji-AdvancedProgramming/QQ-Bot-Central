@@ -34,4 +34,14 @@ public class CourseController {
             return APIResponse.Fail("4000", e.getLocalizedMessage());
         }
     }
+
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public APIResponse deleteGroup(@PathVariable("id") String groupId){
+        try{
+            courseMapper.deleteById(groupId);
+            return APIResponse.Success();
+        } catch (Exception e) {
+            return APIResponse.Fail("4000", e.getLocalizedMessage());
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package org.tongji.programming.DTO.cqhttp;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -37,5 +38,5 @@ public class APIResponse {
     /**
      * 具体的数据（将会被延迟反序列化）
      */
-    private JSONObject data;
+    private JSON data;
 }

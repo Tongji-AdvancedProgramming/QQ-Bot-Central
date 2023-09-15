@@ -8,9 +8,18 @@ import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoResponse;
 public interface BotGroupService {
     /**
      * 获取群消息，如果机器人尚未加入群, group_create_time, group_level, max_member_count 和 member_count 将会为0
-     * @param request 请求体
-     * @return 响应
+     * @return `GetGroupInfoResponse`
      */
     @Get("http://localhost:5700/get_group_info")
     APIResponse getGroupInfo(@Query("group_id") long groupId, @Query("no_cache") boolean noCache);
+
+    /**
+     * 获取群成员信息
+     * @param groupId 群号
+     * @param userId QQ号
+     * @param noCache 是否停用缓存
+     * @return GroupMemberInfo
+     */
+    @Get("http://localhost:5700/get_group_member_info")
+    APIResponse getGroupMemberInfo(@Query("group_id") long groupId,@Query("user_id") long userId, @Query("no_cache") boolean noCache);
 }

@@ -37,23 +37,5 @@ public class StudentServiceTest {
 
     @Test
     public void testStudent(){
-        courseMapper.deleteTable();
-        courseMapper.createTable();
-        studentMapper.deleteTable();
-        studentMapper.createTable();
-
-        List<Student> userLogins = studentMapper.selectAll();
-        System.out.println(userLogins);
-
-        var newCourse = Course.builder().name("高程").id("1008801").build();
-        var newStudents = new ArrayList<Student>();
-
-        newStudents.add(Student.builder().name("小明").stuNo("2152010").major("信01").courseId("1008801").build());
-        newStudents.add(Student.builder().name("小红").stuNo("2152011").major("信02").courseId("1008801").build());
-        courseMapper.insertCourse(newCourse);
-        studentMapper.insertStudents(newStudents);
-
-        userLogins = studentMapper.selectAll();
-        System.out.println(userLogins);
     }
 }
