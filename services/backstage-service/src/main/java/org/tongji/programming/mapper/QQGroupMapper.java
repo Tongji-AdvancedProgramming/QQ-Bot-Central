@@ -24,4 +24,11 @@ public interface QQGroupMapper {
      * @return 群
      */
     QQGroup selectById(@Param("id") String id);
+
+    /**
+     * 插入或更新
+     * @param group 群实体
+     * @return 更改的行
+     */
+    int insertOrUpdate(@Param("group") QQGroup group);
 }

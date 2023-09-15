@@ -4,6 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.tongji.programming.mapper.QQGroupMapper">
+    <insert id="insertOrUpdate">
+        insert into QQGroup (id, courseId, note)
+        values (#{group.id},#{group.courseId},#{group.note})
+        on duplicate key update
+        courseId = #{group.courseId},
+        note = #{group.note};
+    </insert>
+
     <select id="selectByCourseId" resultType="org.tongji.programming.pojo.QQGroup">
         select *
         from QQGroup
