@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.tongji.programming.DTO.cqhttp.APIResponse;
+import org.tongji.programming.helper.ListHelper;
 
 import java.util.List;
 
@@ -31,7 +32,9 @@ public class TestJson {
         var data = response.getData();
 
         /* 4. 把data解析为一个List */
-        List<Integer> list = data.toJavaObject(List.class);
+        List<?> listRaw = data.toJavaObject(List.class);
+
+        List<Integer> list = ListHelper.safeConvertToList(listRaw, Integer.class);
 
         /* 5. 输出结果 */
         System.err.println(list);
