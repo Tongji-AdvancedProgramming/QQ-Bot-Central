@@ -1,6 +1,7 @@
 package org.tongji.programming.http;
 
-import com.dtflys.forest.annotation.Get;
+import com.dtflys.forest.annotation.*;
+import org.tongji.programming.DTO.cqhttp.APIResponse;
 import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoRequest;
 import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoResponse;
 
@@ -11,5 +12,5 @@ public interface BotGroupService {
      * @return 响应
      */
     @Get("http://localhost:5700/get_group_info")
-    GetGroupInfoResponse getGroupInfo(GetGroupInfoRequest request);
+    APIResponse getGroupInfo(@Query("group_id") long groupId, @Query("no_cache") boolean noCache);
 }

@@ -1,9 +1,12 @@
 package org.tongji.programming.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoRequest;
+import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoResponse;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.http.BotGroupService;
@@ -43,9 +46,16 @@ public class GroupController {
     private BotGroupService botGroupService;
 
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public APIResponse validateGroup(@RequestParam String groupId){
-        var request = GetGroupInfoRequest.builder().groupId(Long.parseLong(groupId)).noCache(true).build();
-        var response = botGroupService.getGroupInfo(request);
-        return APIDataResponse.Success(response.getMaxMemberCount() > 0);
+    public APIResponse validateGroup(@RequestParam("group_id") String groupId){
+        var response = botGroupService.getGroupInfo(Long.parseLong(groupId), true);
+
+        if(!response.getStatus().equals("ok")){
+            return APIResponse.Fail("4000",response.getMsg());
+        }
+
+        var data = JSONObject.toJavaObject(response.getData(), GetGroupInfoResponse.class);
+        var inGroup = data.getMaxMemberCount() > 0;
+
+        return APIDataResponse.Success(inGroup);
     }
 }
