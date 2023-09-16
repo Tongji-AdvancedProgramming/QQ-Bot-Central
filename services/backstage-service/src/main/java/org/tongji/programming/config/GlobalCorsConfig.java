@@ -16,6 +16,7 @@ public class GlobalCorsConfig {
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("http://127.0.0.1:5173");
         config.addAllowedOrigin("http://10.80.42.189");
+        config.addAllowedOrigin("https://bot.cinea.cc");
         //是否发送 Cookie
         config.setAllowCredentials(true);
         //放行哪些请求方式
