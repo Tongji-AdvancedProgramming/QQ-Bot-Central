@@ -1,5 +1,6 @@
 package org.tongji.programming.service.impl;
 
+import com.csvreader.CsvReader;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -49,16 +51,40 @@ public class StudentImportServiceImpl implements StudentImportService {
             students.add(student);
         }
 
-        try{
+        try {
             return studentMapper.insertStudents(students);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("插入失败，请检查是否有重复数据，或课程号是否已导入后台。");
         }
     }
 
-    // TODO
     @Override
-    public int resolveCsv(InputStream fileStream) {
-        return 0;
+    @Transactional(rollbackFor = Exception.class)
+    public int resolveCsv(InputStream fileStream) throws IOException {
+        var reader = new CsvReader(fileStream, StandardCharsets.UTF_8);
+
+        if (!reader.readHeaders()) {
+            throw new RuntimeException("导入失败，未检测到表头。");
+        }
+
+        var students = new LinkedList<Student>();
+
+        while (reader.readRecord()) {
+            var name = reader.get("姓名");
+            var stuNo = reader.get("学号");
+            var courseId = reader.get("课号");
+            var classId = reader.get("班号");
+            var major = reader.get("专业");
+
+            var student = Student.builder().major(major).classId(classId).classId(classId)
+                    .courseId(courseId).stuNo(stuNo).name(name).build();
+            students.add(student);
+        }
+
+        try {
+            return studentMapper.insertStudents(students);
+        } catch (Exception e) {
+            throw new RuntimeException("插入失败，请检查是否有重复数据，或课程号是否已导入后台。");
+        }
     }
 }

@@ -1,12 +1,10 @@
 package org.tongji.programming.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoRequest;
-import org.tongji.programming.DTO.cqhttp.group.GetGroupInfoResponse;
+import org.tongji.programming.DTO.cqhttp.group.GroupInfo;
 import org.tongji.programming.DTO.cqhttp.group.GroupMemberInfo;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
@@ -73,7 +71,7 @@ public class GroupController {
             return APIResponse.Fail("4000", response.getWording());
         }
 
-        var data = JSONObject.toJavaObject(response.getData(), GetGroupInfoResponse.class);
+        var data = JSONObject.toJavaObject(response.getData(), GroupInfo.class);
 
         var inGroup = data.getMaxMemberCount() > 0;
         var isAdmin = true;

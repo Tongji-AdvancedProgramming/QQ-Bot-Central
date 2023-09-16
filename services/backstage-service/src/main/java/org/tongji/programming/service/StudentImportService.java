@@ -9,5 +9,5 @@ import java.io.InputStream;
 public interface StudentImportService {
     int resolvePlainText(InputStream fileStream, String course, String classId) throws IOException, RuntimeException;
 
-    public int resolveCsv(InputStream fileStream);
+    public int resolveCsv(InputStream fileStream) throws IOException;
 }

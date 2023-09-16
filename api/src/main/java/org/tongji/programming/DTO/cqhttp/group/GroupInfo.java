@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetGroupInfoResponse {
+public class GroupInfo {
     @JsonProperty("group_id")
     private long groupId;
 
