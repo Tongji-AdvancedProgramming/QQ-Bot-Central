@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.mapper.CheckResultMapper" >
+    <!-- 插入学生信息 -->
+    <insert id="insertCheckResult">
+        INSERT INTO CheckResult (id,card, failed_times)
+        VALUES (#{id},#{card}, #{failed_times})
+    </insert>
+
+    <!-- 根据QQ号查询学生信息 -->
+    <select id="selectCheckResultById" parameterType="Long" resultType="org.tongji.programming.mapper.CheckResult">
+        SELECT *
+        FROM CheckResult
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据QQ号更新检查不通过次数 -->
+    <update id="updateFailedTimesById" parameterType="map">
+        UPDATE CheckResult
+        SET failed_times = #{failed_times}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>
