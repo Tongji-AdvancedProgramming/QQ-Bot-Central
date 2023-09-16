@@ -35,6 +35,18 @@ services:
     networks:
       - botnet
 
+  backstage:
+    build:
+      context: ./services/backstage-service
+      dockerfile: Dockerfile
+    container_name: backstage-service
+    ports:
+      - "9905:9905"
+    depends_on:
+      - zookeeper
+    networks:
+      - botnet
+
   gateway:
     build:
       context: ./services/gateway-service
@@ -44,6 +56,7 @@ services:
       - "9902:9902"
     depends_on:
       - demo
+      - backstage
     networks:
       - botnet
 
