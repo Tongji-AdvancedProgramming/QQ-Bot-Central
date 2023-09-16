@@ -21,6 +21,8 @@ services:
       - gateway
     networks:
       - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
 
   demo:
@@ -34,6 +36,8 @@ services:
       - zookeeper
     networks:
       - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   backstage:
     build:
@@ -46,6 +50,8 @@ services:
       - zookeeper
     networks:
       - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   gateway:
     build:
@@ -59,6 +65,8 @@ services:
       - backstage
     networks:
       - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
 networks:
   botnet:
