@@ -1,5 +1,6 @@
 package org.tongji.programming.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @RequestMapping("bot")
 public class BotController {
@@ -59,6 +61,7 @@ public class BotController {
             result.setLastMessage(status.getStat().getLastMessageTime());
 
         } catch (Exception e) {
+            log.error("Bot疑似崩溃，错误信息：{}", e.getLocalizedMessage());
             result.setStatus("已崩溃");
             result.setType("fail");
             return APIDataResponse.Success(result);
