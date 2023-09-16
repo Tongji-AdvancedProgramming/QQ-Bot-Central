@@ -18,8 +18,12 @@ import java.util.regex.Pattern;
 @Component
 public class StudentImportServiceImpl implements StudentImportService {
 
-    @Autowired
     StudentMapper studentMapper;
+
+    @Autowired
+    public void setStudentMapper(StudentMapper studentMapper) {
+        this.studentMapper = studentMapper;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -45,7 +49,11 @@ public class StudentImportServiceImpl implements StudentImportService {
             students.add(student);
         }
 
-        return studentMapper.insertStudents(students);
+        try{
+            return studentMapper.insertStudents(students);
+        }catch (Exception e){
+            throw new RuntimeException("插入失败，请检查是否有重复数据，或课程号是否已导入后台。");
+        }
     }
 
     // TODO

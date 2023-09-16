@@ -46,7 +46,7 @@
         SELECT *
         FROM `Student`
         ORDER BY `stuNo`
-        LIMIT #{pageSize}
+            LIMIT #{pageSize}
         OFFSET #{offset}
     </select>
 
@@ -55,7 +55,30 @@
         FROM `Student`
         WHERE `courseId` = #{courseId}
         ORDER BY `stuNo`
+            LIMIT #{pageSize}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectWithPageAndFilter" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        WHERE 1 = 1
+        <if test="courseId != null and courseId != ''">AND `courseId` = #{courseId}</if>
+        <if test="classId != null and classId != ''">AND `classId` = #{classId}</if>
+        <if test="startStuNo != null and startStuNo != ''">AND `stuNo` &gt;= #{startStuNo}</if>
+        <if test="endStuNo != null and endStuNo != ''">AND `stuNo` &lt;= #{endStuNo}</if>
+        ORDER BY `stuNo`
         LIMIT #{pageSize}
         OFFSET #{offset}
+    </select>
+
+    <select id="selectWithPageAndFilterCount" resultType="java.lang.Long">
+        SELECT count(*)
+        FROM `Student`
+        WHERE 1 = 1
+        <if test="courseId != null and courseId != ''">AND `courseId` = #{courseId}</if>
+        <if test="classId != null and classId != ''">AND `classId` = #{classId}</if>
+        <if test="startStuNo != null and startStuNo != ''">AND `stuNo` &gt;= #{startStuNo}</if>
+        <if test="endStuNo != null and endStuNo != ''">AND `stuNo` &lt;= #{endStuNo}</if>
     </select>
 </mapper>
