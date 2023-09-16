@@ -8,7 +8,7 @@ public interface BotGroupService {
      * 获取群消息，如果机器人尚未加入群, group_create_time, group_level, max_member_count 和 member_count 将会为0
      * @return `GroupInfo`
      */
-    @Get("http://localhost:5700/get_group_info")
+    @Get("http://host.docker.internal:5700/get_group_info")
     APIResponse getGroupInfo(@Query("group_id") long groupId, @Query("no_cache") boolean noCache);
 
     /**
@@ -16,7 +16,7 @@ public interface BotGroupService {
      * @param noCache 禁用缓存
      * @return List GroupInfo
      */
-    @Get("http://localhost:5700/get_group_list")
+    @Get("http://host.docker.internal:5700/get_group_list")
     APIResponse getGroupList(@Query("no_cache") boolean noCache);
 
 
@@ -27,6 +27,6 @@ public interface BotGroupService {
      * @param noCache 是否停用缓存
      * @return GroupMemberInfo
      */
-    @Get("http://localhost:5700/get_group_member_info")
+    @Get("http://host.docker.internal:5700/get_group_member_info")
     APIResponse getGroupMemberInfo(@Query("group_id") long groupId,@Query("user_id") long userId, @Query("no_cache") boolean noCache);
 }

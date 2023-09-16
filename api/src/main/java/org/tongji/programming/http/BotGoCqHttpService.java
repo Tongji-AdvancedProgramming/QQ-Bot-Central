@@ -8,6 +8,6 @@ public interface BotGoCqHttpService {
      * 获取bot状态
      * @return Status
      */
-    @Get("http://localhost:5700/get_status")
+    @Get("http://host.docker.internal:5700/get_status")
     APIResponse getStatus();
 }
