@@ -15,6 +15,6 @@ public class TestPassword {
 
     @Test
     public void tester() {
-        System.err.println("password --> " + encryptor.encrypt("rememberus1nthedayofend"));
+        System.err.println("password --> " + encryptor.encrypt("把密码放在这里，运行测试就能看见加密的密文"));
     }
 }
