@@ -70,7 +70,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.7.10</version>
                 <configuration>
-                    <mainClass>org.tongji.programming.DemoServiceProvider</mainClass>
+                    <mainClass>org.tongji.programming.BackstageServiceProvider</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
