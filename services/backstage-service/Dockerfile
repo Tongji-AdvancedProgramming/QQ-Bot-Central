@@ -1,11 +1,12 @@
 FROM amazoncorretto:8
 
 COPY target/backstage-service-1.0.0-SNAPSHOT.jar /root/app.jar
+COPY start.sh /root/start.sh
 
 ENV Bot_AdminPass admin
 ENV Bot_JwtKey rememberUs
 
-RUN echo 172.17.0.1 host.docker.internal >> /etc/hosts
+RUN chmod +x /root/start.sh
 
-ENTRYPOINT java -Xmx1g -Djasypt.encryptor.password=rmbrus -jar /root/app.jar
+ENTRYPOINT ["/root/start.sh"]
 EXPOSE 9905

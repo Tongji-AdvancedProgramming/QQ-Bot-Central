@@ -1,8 +1,9 @@
 FROM amazoncorretto:8
 
 COPY target/gateway-service-1.0.0-SNAPSHOT.jar /root/app.jar
+COPY start.sh /root/start.sh
 
-RUN echo 172.17.0.1 host.docker.internal >> /etc/hosts
+RUN chmod +x /root/start.sh
 
-ENTRYPOINT java -Xmx512m -jar /root/app.jar
+ENTRYPOINT ["/root/start.sh"]
 EXPOSE 9902
