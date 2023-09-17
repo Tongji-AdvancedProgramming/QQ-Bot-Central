@@ -17,6 +17,7 @@
         <module>demoservice-sayhelloworld</module>
         <module>gateway-service</module>
         <module>backstage-service</module>
+        <module>grouputils-service</module>
     </modules>
 
     <properties>

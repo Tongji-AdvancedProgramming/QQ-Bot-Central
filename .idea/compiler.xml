@@ -10,6 +10,7 @@
         <module name="client" />
         <module name="demoservice-sayhelloworld" />
         <module name="api" />
+        <module name="grouputils-service" />
         <module name="gateway-service" />
         <module name="backstage-service" />
       </profile>

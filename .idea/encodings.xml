@@ -12,6 +12,8 @@
     <file url="file://$PROJECT_DIR$/services/demoservice-sayhelloworld/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/gateway-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/gateway-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/grouputils-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/grouputils-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/helloworld-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/helloworld-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/src/main/java" charset="UTF-8" />
