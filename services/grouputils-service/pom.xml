@@ -34,7 +34,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.7.10</version>
                 <configuration>
-                    <mainClass>org.tongji.programming.GatewayServiceProvider</mainClass>
+                    <mainClass>org.tongji.programming.GroupUtilServiceProvider</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
