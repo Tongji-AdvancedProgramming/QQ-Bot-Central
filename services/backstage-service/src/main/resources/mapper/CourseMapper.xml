@@ -12,26 +12,34 @@
         </collection>
     </resultMap>
 
-    <insert id="insertCourse">
-        INSERT INTO `Course` (`id`, `name`) VALUES (#{course.id},#{course.name})
+    <insert id="insertOrUpdate">
+        insert into Course (id, name)
+        values (#{course.id}, #{course.name})
+        on duplicate key update name = #{course.name}
     </insert>
 
     <select id="selectAll" resultType="org.tongji.programming.pojo.Course">
-        SELECT * FROM `Course`
+        SELECT *
+        FROM `Course`
     </select>
 
     <select id="selectById" resultType="org.tongji.programming.pojo.Course">
-        SELECT * FROM `Course` WHERE `id`=#{id} LIMIT 1
+        SELECT *
+        FROM `Course`
+        WHERE `id` = #{id}
+        LIMIT 1
     </select>
 
     <select id="selectAllWithGroupId" resultType="org.tongji.programming.pojo.Course" resultMap="CourseWithGroupIds">
-        SELECT
-            Course.*, QG.id
+        SELECT Course.*,
+               QG.id
         FROM Course
-        LEFT JOIN bot.QQGroup QG on Course.id = QG.courseId
+                 LEFT JOIN bot.QQGroup QG on Course.id = QG.courseId
     </select>
 
     <delete id="deleteById">
-        DELETE FROM `Course` WHERE `id`=#{id}
+        DELETE
+        FROM `Course`
+        WHERE `id` = #{id}
     </delete>
 </mapper>

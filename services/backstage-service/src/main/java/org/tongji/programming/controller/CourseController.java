@@ -25,10 +25,10 @@ public class CourseController {
         return APIDataResponse.Success(result);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    public APIResponse AddCourse(@RequestBody Course course) {
+    @RequestMapping(method = RequestMethod.POST)
+    public APIResponse AddOrUpdateCourse(@RequestBody Course course) {
         try {
-            courseMapper.insertCourse(course);
+            courseMapper.insertOrUpdate(course);
             return APIResponse.Success();
         } catch (Exception e) {
             return APIResponse.Fail("4000", e.getLocalizedMessage());
