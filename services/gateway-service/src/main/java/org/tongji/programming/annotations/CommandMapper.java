@@ -47,7 +47,7 @@ public class CommandMapper implements ApplicationContextAware {
 
     private Map<String, Object> components = new HashMap<>();
 
-    @DubboReference
+    @Autowired
     RestrictLevelService restrictLevelService;
 
     @Override

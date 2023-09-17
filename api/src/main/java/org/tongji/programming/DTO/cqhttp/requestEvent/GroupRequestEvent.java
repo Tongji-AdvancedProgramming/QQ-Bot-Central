@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.tongji.programming.DTO.cqhttp.UniversalReport;
 
 import java.io.Serializable;
 

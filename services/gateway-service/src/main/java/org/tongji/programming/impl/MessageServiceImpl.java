@@ -32,7 +32,6 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public String messageEventHandler(String eventRaw) {
         try {
-            logger.info(String.format("消息网关处理消息：%s", eventRaw));
             var mapper = JSONHelper.getLossyMapper();
             var event = mapper.readValue(eventRaw, MessageUniversalReport.class);
 

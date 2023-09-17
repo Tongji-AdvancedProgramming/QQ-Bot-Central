@@ -3,13 +3,15 @@ package org.tongji.programming.pojo;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 学生的Pojo
  * 主键是StuNo和ClassId
  */
 @Data
 @Builder
-public class Student {
+public class Student implements Serializable {
     /**
      * 学号
      */

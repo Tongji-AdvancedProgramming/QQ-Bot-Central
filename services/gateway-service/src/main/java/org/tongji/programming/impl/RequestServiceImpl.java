@@ -19,20 +19,22 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public String requestEventHandler(String eventRaw) {
-        try{
+        try {
             var mapper = JSONHelper.getLossyMapper();
             var requestRaw = mapper.readValue(eventRaw, RequestEventUniversal.class);
 
-            if(requestRaw.getRequestType().equals("group")){
+            if (requestRaw.getRequestType().equals("group")) {
                 // 申请加群，交其他服务处理
                 var request = mapper.readValue(eventRaw, GroupRequestEvent.class);
-                return groupUtilService.groupRequestHandler(request);
+                var response = groupUtilService.groupRequestHandler(request);
+                log.info("外部例程返回：{}", response);
+                return response;
             }
 
             // 暂时不支持处理
             return "{}";
         } catch (Exception e) {
-            log.error("消息网关处理请求“{}”时出现异常：{}",eventRaw,e.getLocalizedMessage());
+            log.error("消息网关处理请求“{}”时出现异常：{}", eventRaw, e.getLocalizedMessage());
             return "{}";
         }
     }
