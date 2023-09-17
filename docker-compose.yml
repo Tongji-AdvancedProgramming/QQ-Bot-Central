@@ -68,6 +68,21 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
+  group:
+    build:
+      context: ./services/grouputils-service
+      dockerfile: Dockerfile
+    container_name: grouputils-service
+    ports:
+      - "9906:9906"
+    depends_on:
+      - demo
+      - backstage
+    networks:
+      - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
 networks:
   botnet:
 
