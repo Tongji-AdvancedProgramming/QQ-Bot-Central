@@ -3,6 +3,7 @@ package org.tongji.programming.impl;
 import lombok.var;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.config.BotConfiguration;
 import org.tongji.programming.enums.GroupLevel;
@@ -12,11 +13,11 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-@DubboService
+@Component
 public class RestrictLevelServiceImpl implements RestrictLevelService {
 
-    private Map<Long, GroupLevel> qqGroupMap = new HashMap<>();
-    
+    private final Map<Long, GroupLevel> qqGroupMap = new HashMap<>();
+
     @Autowired
     BotConfiguration botConfiguration;
 

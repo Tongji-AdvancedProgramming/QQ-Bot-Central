@@ -7,11 +7,8 @@ package org.tongji.programming.service;
 
 import org.apache.dubbo.config.annotation.DubboService;
 
-@DubboService
 public interface MessageService {
 
     String messageEventHandler(String eventRaw);
-
-    String sendMessage();
 
 }

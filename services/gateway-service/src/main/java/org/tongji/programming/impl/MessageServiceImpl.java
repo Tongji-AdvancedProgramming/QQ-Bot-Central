@@ -5,6 +5,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.annotations.CommandMapper;
 import org.tongji.programming.enums.GroupLevel;
@@ -14,7 +15,7 @@ import org.tongji.programming.service.MessageService;
 import lombok.var;
 import org.tongji.programming.service.RestrictLevelService;
 
-@DubboService
+@Component
 public class MessageServiceImpl implements MessageService {
 
     @DubboReference
@@ -23,7 +24,7 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     CommandMapper commandMapper;
 
-    @DubboReference
+    @Autowired
     RestrictLevelService restrictLevelService;
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
@@ -62,10 +63,5 @@ public class MessageServiceImpl implements MessageService {
             logger.error(e.getMessage());
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public String sendMessage() {
-        return null;
     }
 }

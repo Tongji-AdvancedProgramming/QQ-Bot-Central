@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.var;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tongji.programming.DTO.cqhttp.UniversalReport;
 import org.tongji.programming.service.GatewayService;
 import org.tongji.programming.service.MessageService;
@@ -12,7 +13,7 @@ import org.tongji.programming.service.MessageService;
 @DubboService
 public class GatewayServiceImpl implements GatewayService {
 
-    @DubboReference
+    @Autowired
     MessageService messageService;
 
     @Override
