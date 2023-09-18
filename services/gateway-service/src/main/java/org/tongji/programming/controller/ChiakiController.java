@@ -7,6 +7,7 @@ import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.annotations.CommandMapper.*;
 import org.tongji.programming.enums.GroupLevel;
 import org.tongji.programming.service.DemoService;
+import org.tongji.programming.service.HelloWorldService;
 
 @Component
 @CommandController("chiaki")
@@ -29,6 +30,21 @@ public class ChiakiController {
     public String shenJian(MessageUniversalReport event) {
         return demoService.sjImage(event);
     }
+
+    @DubboReference
+    HelloWorldService helloWorldService;
+
+    @CommandMapping("test")
+    public String checkCard(MessageUniversalReport event){
+        return helloWorldService.checkCard(event.getGroupId(), event.getUserId());
+    }
+
+    @CommandMapping("update")
+    public String updateAssistants(MessageUniversalReport event){
+        return helloWorldService.addAssistants();
+    }
+
+
 
 
 }

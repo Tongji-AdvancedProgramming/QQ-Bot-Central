@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.mapper.CheckResultMapper" >
+    <!-- 插入学生信息 -->
+    <insert id="insertCheckResult">
+        INSERT IGNORE INTO CheckResult (id,card, failedTimes,failedReason)
+        VALUES (#{id},#{card}, #{failedTimes},#{failedReason})
+        ON DUPLICATE KEY UPDATE
+                             card = VALUES(card),
+                             failedReason = VALUES(failedReason);
+    </insert>
+    <delete id="deleteById">
+        DELETE
+        FROM CheckResult
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据QQ号查询学生信息 -->
+    <select id="selectCheckResultById" parameterType="Long" resultType="org.tongji.programming.mapper.CheckResult">
+        SELECT id, card, failedTimes,failedReason
+        FROM CheckResult
+        WHERE id = #{id}
+    </select>
+
+
+    <select id="selectAll" resultType="org.tongji.programming.mapper.CheckResult">
+        SELECT *
+        FROM CheckResult
+    </select>
+
+    <!-- 根据QQ号更新检查不通过次数 -->
+    <update id="updateFailedById" parameterType="map">
+        UPDATE CheckResult
+        SET failedTimes = #{failedTimes},failedReason=#{failedReason}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>
