@@ -83,6 +83,22 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
+  card:
+    build:
+      context: ./services/checkcard-service
+      dockerfile: Dockerfile
+    container_name: checkcard-service
+    ports:
+      - "9904:9904"
+    depends_on:
+      - demo
+      - backstage
+    networks:
+      - botnet
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+
 networks:
   botnet:
 

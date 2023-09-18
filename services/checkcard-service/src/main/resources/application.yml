@@ -1,6 +1,6 @@
 dubbo:
   application:
-    name: qq-bot-service-hello-world
+    name: qq-bot-service-check-card
     logger: slf4j
   protocol:
     name: tri

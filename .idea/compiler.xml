@@ -11,9 +11,9 @@
         <module name="client" />
         <module name="demoservice-sayhelloworld" />
         <module name="api" />
-        <module name="helloworld-service" />
         <module name="grouputils-service" />
         <module name="backstage-service" />
+        <module name="checkcard-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("org.tongji.programming.mapper")
 @EnableDubbo
-public class HelloWorldServiceProvider {
+public class CheckCardServiceProvider {
     public static void main(String[] args) {
-        SpringApplication.run(HelloWorldServiceProvider.class, args);
+        SpringApplication.run(CheckCardServiceProvider.class, args);
     }
 }
