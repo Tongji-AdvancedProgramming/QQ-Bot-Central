@@ -1,10 +1,8 @@
 package org.tongji.programming.service.impl;
 
 import lombok.var;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.bot.LoginInfo;
-import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.http.BotSelfHttpService;
 import org.tongji.programming.service.BotSelfService;
 

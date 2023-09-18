@@ -1,0 +1,49 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "BackstageServiceProvider",
+            "request": "launch",
+            "mainClass": "org.tongji.programming.BackstageServiceProvider",
+            "projectName": "backstage-service"
+        },
+        {
+            "type": "java",
+            "name": "QQBotApplicationRunner",
+            "request": "launch",
+            "mainClass": "org.tongji.programming.QQBotApplicationRunner",
+            "projectName": "client"
+        },
+        {
+            "type": "java",
+            "name": "DemoServiceProvider",
+            "request": "launch",
+            "mainClass": "org.tongji.programming.DemoServiceProvider",
+            "projectName": "demoservice-sayhelloworld"
+        },
+        {
+            "type": "java",
+            "name": "GatewayServiceProvider",
+            "request": "launch",
+            "mainClass": "org.tongji.programming.GatewayServiceProvider",
+            "projectName": "gateway-service"
+        },
+        {
+            "type": "java",
+            "name": "GroupUtilServiceProvider",
+            "request": "launch",
+            "mainClass": "org.tongji.programming.GroupUtilServiceProvider",
+            "projectName": "grouputils-service"
+        }
+    ]
+}

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import lombok.var;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.tongji.programming.DTO.cqhttp.APIResponse;
 import org.tongji.programming.helper.ListHelper;
 
