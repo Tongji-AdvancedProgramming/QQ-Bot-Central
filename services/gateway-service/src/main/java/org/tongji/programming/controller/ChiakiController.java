@@ -1,12 +1,12 @@
 package org.tongji.programming.controller;
 
-import lombok.var;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.annotations.CommandMapper.*;
 import org.tongji.programming.enums.GroupLevel;
 import org.tongji.programming.service.DemoService;
+import org.tongji.programming.service.CheckCardService;
 
 @Component
 @CommandController("chiaki")
@@ -29,6 +29,21 @@ public class ChiakiController {
     public String shenJian(MessageUniversalReport event) {
         return demoService.sjImage(event);
     }
+
+    @DubboReference
+    CheckCardService checkCardService;
+
+    @CommandMapping("检查群名片")
+    public String checkCard(MessageUniversalReport event){
+        return checkCardService.checkCard(event.getGroupId(), event.getUserId());
+    }
+
+    @CommandMapping("update")
+    public String updateAssistants(MessageUniversalReport event){
+        return checkCardService.addAssistants();
+    }
+
+
 
 
 }
