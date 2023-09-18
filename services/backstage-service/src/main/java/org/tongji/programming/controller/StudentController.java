@@ -85,6 +85,13 @@ public class StudentController {
             } catch (Exception e) {
                 return APIResponse.Fail("4000", e.getLocalizedMessage());
             }
+        } else if (Objects.equals(type, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+            try {
+                var result = studentImportService.resolveExcel(file.getInputStream());
+                return APIResponse.Success();
+            } catch (Exception e) {
+                return APIResponse.Fail("4000", e.getLocalizedMessage());
+            }
         }
 
         return APIResponse.Fail("4000", "意外的文件格式");

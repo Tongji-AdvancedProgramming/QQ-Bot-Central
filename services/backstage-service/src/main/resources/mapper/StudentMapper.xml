@@ -81,4 +81,12 @@
         <if test="startStuNo != null and startStuNo != ''">AND `stuNo` &gt;= #{startStuNo}</if>
         <if test="endStuNo != null and endStuNo != ''">AND `stuNo` &lt;= #{endStuNo}</if>
     </select>
+
+    <select id="selectByCourseClass" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        WHERE 1 = 1
+        AND `courseId` = #{courseId}
+        AND `classId` = #{classId}
+    </select>
 </mapper>

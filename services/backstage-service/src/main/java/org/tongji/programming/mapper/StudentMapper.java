@@ -43,8 +43,6 @@ public interface StudentMapper {
     /**
      * 分页和筛选查询
      *
-     * @param offset   已经计算好的offset
-     * @param pageSize 页面大小
      * @return 学生列表
      */
     long selectWithPageAndFilterCount(@Param("courseId") String courseId,
@@ -70,6 +68,14 @@ public interface StudentMapper {
      * @return 学生
      */
     Student selectById(@Param("id") String id, @Param("courseId") String courseId);
+
+    /**
+     * 根据班级查询
+     * @param courseId 课程号
+     * @param classId 班级号
+     * @return 该班的学生
+     */
+    List<Student> selectByCourseClass(@Param("courseId") String courseId,@Param("classId") String classId);
 
     /**
      * 根据学号和课号删除学生

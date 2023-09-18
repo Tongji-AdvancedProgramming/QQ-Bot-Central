@@ -1,5 +1,8 @@
 package org.tongji.programming.service;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.tongji.programming.dto.StudentImportService.StudentImportResult;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,5 +12,7 @@ import java.io.InputStream;
 public interface StudentImportService {
     int resolvePlainText(InputStream fileStream, String course, String classId) throws IOException, RuntimeException;
 
-    public int resolveCsv(InputStream fileStream) throws IOException;
+    int resolveCsv(InputStream fileStream) throws IOException;
+
+    StudentImportResult resolveExcel(InputStream fileStream) throws IOException, InterruptedException;
 }
