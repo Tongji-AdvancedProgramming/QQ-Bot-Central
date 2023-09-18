@@ -18,6 +18,7 @@
         <module>gateway-service</module>
         <module>backstage-service</module>
         <module>grouputils-service</module>
+        <module>checkcard-service</module>
     </modules>
 
     <properties>
