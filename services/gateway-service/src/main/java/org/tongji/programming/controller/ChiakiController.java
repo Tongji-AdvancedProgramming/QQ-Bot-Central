@@ -34,7 +34,7 @@ public class ChiakiController {
     @DubboReference
     HelloWorldService helloWorldService;
 
-    @CommandMapping("test")
+    @CommandMapping("检查群名片")
     public String checkCard(MessageUniversalReport event){
         return helloWorldService.checkCard(event.getGroupId(), event.getUserId());
     }
