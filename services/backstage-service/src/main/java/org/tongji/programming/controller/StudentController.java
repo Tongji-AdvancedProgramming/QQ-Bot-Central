@@ -9,9 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.dto.StudentService.GetStudents;
+import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.mapper.CourseMapper;
 import org.tongji.programming.mapper.StudentMapper;
 import org.tongji.programming.service.StudentImportService;
+import redis.clients.jedis.JedisPool;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -30,6 +32,13 @@ public class StudentController {
 
     @Autowired
     StudentImportService studentImportService;
+
+    JedisPool jedisPool;
+
+    @Autowired
+    public void setJedisPool(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse GetAllStudents(
@@ -73,22 +82,27 @@ public class StudentController {
             }
 
             try {
-                var written = studentImportService.resolvePlainText(file.getInputStream(), courseId, classId);
-                return APIDataResponse.Success(written);
-            } catch (Exception e) {
-                return APIResponse.Fail("4000", e.getLocalizedMessage());
-            }
-        } else if (Objects.equals(type, "text/csv")) {
-            try {
-                var written = studentImportService.resolveCsv(file.getInputStream());
-                return APIDataResponse.Success(written);
+                var result = studentImportService.resolvePlainText(file.getInputStream(), courseId, classId);
+                var mapper = JSONHelper.getLossyMapper();
+
+                var jedis = jedisPool.getResource();
+                jedis.select(2);
+                jedis.setex(result.getRandomId(), 300L, mapper.writeValueAsString(result));
+
+                return APIDataResponse.Success(result);
             } catch (Exception e) {
                 return APIResponse.Fail("4000", e.getLocalizedMessage());
             }
         } else if (Objects.equals(type, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
             try {
                 var result = studentImportService.resolveExcel(file.getInputStream());
-                return APIResponse.Success();
+                var mapper = JSONHelper.getLossyMapper();
+
+                var jedis = jedisPool.getResource();
+                jedis.select(2);
+                jedis.setex(result.getRandomId(), 300L, mapper.writeValueAsString(result));
+
+                return APIDataResponse.Success(result);
             } catch (Exception e) {
                 return APIResponse.Fail("4000", e.getLocalizedMessage());
             }

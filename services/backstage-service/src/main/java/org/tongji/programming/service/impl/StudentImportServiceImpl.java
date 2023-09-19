@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.dto.StudentImportService.StudentImportExcelClass;
 import org.tongji.programming.dto.StudentImportService.StudentImportResult;
 import org.tongji.programming.helper.DirectoryDeleter;
 import org.tongji.programming.helper.JSONHelper;
+import org.tongji.programming.mapper.CourseMapper;
 import org.tongji.programming.mapper.StudentMapper;
 import org.tongji.programming.pojo.Student;
 import org.tongji.programming.service.StudentImportService;
@@ -23,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,18 +39,25 @@ public class StudentImportServiceImpl implements StudentImportService {
 
     StudentMapper studentMapper;
 
+    CourseMapper courseMapper;
+
     @Autowired
     public void setStudentMapper(StudentMapper studentMapper) {
         this.studentMapper = studentMapper;
     }
 
+    @Autowired
+    public void setCourseMapper(CourseMapper courseMapper) {
+        this.courseMapper = courseMapper;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int resolvePlainText(InputStream fileStream, String course, String classId) throws IOException, RuntimeException {
+    public StudentImportResult resolvePlainText(InputStream fileStream, String course, String classId) throws IOException, RuntimeException {
         var reader = new BufferedReader(new InputStreamReader(fileStream));
         var pattern = Pattern.compile("(\\d{7})\\s(.*)");
 
-        var students = new LinkedList<Student>();
+        var studentsForImport = new LinkedList<Student>();
 
         while (reader.ready()) {
             var line = reader.readLine();
@@ -61,14 +72,48 @@ public class StudentImportServiceImpl implements StudentImportService {
             var name = matcher.group(2);
 
             var student = Student.builder().stuNo(stuNo).name(name).major("").courseId(course).classId(classId).build();
-            students.add(student);
+            studentsForImport.add(student);
         }
 
-        try {
-            return studentMapper.insertStudents(students);
-        } catch (Exception e) {
-            throw new RuntimeException("插入失败，请检查是否有重复数据，或课程号是否已导入后台。");
-        }
+        var students = studentMapper.selectByCourseClass(course,classId);
+        Map<String, Student> studentMap = students.stream().collect(Collectors.toMap(Student::getStuNo, student -> student));
+
+        List<Student> insertList = new LinkedList<>();
+        List<Student> updateList = new LinkedList<>();
+        List<Student> deleteList;
+
+        studentsForImport.forEach(student -> {
+            // 寻找数据库中的记录
+            var stuId = student.getStuNo();
+            var studentInDb = studentMap.get(stuId);
+            if (studentInDb == null) {
+                // 若无记录，则插入到数据库
+                studentInDb = Student.builder()
+                        .stuNo(stuId).name(student.getName()).major(student.getMajor())
+                        .courseId(course).classId(classId)
+                        .build();
+                insertList.add(studentInDb);
+            }else{
+                // 有记录，检查是否需要更新
+                if(!student.equals(studentInDb)){
+                    studentInDb = Student.builder()
+                            .stuNo(stuId).name(student.getName()).major(student.getMajor())
+                            .courseId(course).classId(classId)
+                            .build();
+                    updateList.add(studentInDb);
+                }
+            }
+            // 将记录从表中删除
+            studentMap.remove(stuId);
+        });
+
+        deleteList = new ArrayList<>(studentMap.values());
+
+        return StudentImportResult.builder()
+                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDate.now())
+                .resolved(students.size()).repeated(students.size()-insertList.size()-updateList.size()-deleteList.size())
+                .deleteList(deleteList).updateList(updateList).insertList(insertList)
+                .build();
     }
 
     @Override
@@ -111,7 +156,6 @@ public class StudentImportServiceImpl implements StudentImportService {
      * 导入Excel是最难也最复杂的部分，Excel是同济大学点名册，假定点名册内容绝对正确。
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public StudentImportResult resolveExcel(InputStream fileStream) throws IOException, InterruptedException {
         var tempFileDir = Paths.get(tempPath.toAbsolutePath().toString(), RandomStringUtils.randomAlphanumeric(6));
         var tempFilePath = Paths.get(tempFileDir.toString(), "workbook.xlsx");
@@ -161,7 +205,7 @@ public class StudentImportServiceImpl implements StudentImportService {
 
         if (exitCode != 0)  {
             log.error("外部Go程序执行失败：");
-            throw new RemoteException("导入失败，解析程序发生运行时错误，请您检查是否传入了xlsx文档，并且文档可以正常打开，没有错误。");
+            throw new RuntimeException("导入失败，解析程序发生运行时错误，请您检查是否传入了xlsx文档，并且文档可以正常打开，没有错误。");
         }
 
         var execResult = output.toString();
@@ -169,22 +213,49 @@ public class StudentImportServiceImpl implements StudentImportService {
         var mapper = JSONHelper.getLossyMapper();
         var classInfo = mapper.readValue(execResult, StudentImportExcelClass.class);
 
+        var course = courseMapper.selectById(classInfo.getCode());
+        if (course == null) {
+            throw new RuntimeException("导入失败，数据库中还没有添加这门课，请您先添加课程再导入。");
+        }
+
         List<Student> students = studentMapper.selectByCourseClass(classInfo.getCode(),classInfo.getClazz());
         Map<String, Student> studentMap = students.stream().collect(Collectors.toMap(Student::getStuNo, student -> student));
 
         List<Student> insertList = new LinkedList<>();
         List<Student> updateList = new LinkedList<>();
-        List<Student> deleteList = new LinkedList<>();
+        List<Student> deleteList;
 
-        classInfo.getStudents().stream().forEach(student -> {
+        classInfo.getStudents().forEach(student -> {
             // 寻找数据库中的记录
             var stuId = String.valueOf(student.getStudentId());
             var studentInDb = studentMap.get(stuId);
             if (studentInDb == null) {
-                // 插入信息，接下来需要做一个专业全称到简称的处理。
+                // 若无记录，则插入到数据库
+                studentInDb = Student.builder()
+                        .stuNo(stuId).name(student.getName()).major(student.getMajor())
+                        .courseId(classInfo.getCode()).classId(classInfo.getClazz())
+                        .build();
+                insertList.add(studentInDb);
+            }else{
+                // 有记录，检查是否需要更新
+                if(!student.isSame(studentInDb)){
+                    studentInDb = Student.builder()
+                            .stuNo(stuId).name(student.getName()).major(student.getMajor())
+                            .courseId(classInfo.getCode()).classId(classInfo.getClazz())
+                            .build();
+                    updateList.add(studentInDb);
+                }
             }
+            // 将记录从表中删除
+            studentMap.remove(stuId);
         });
 
-        return StudentImportResult.builder().build();
+        deleteList = new ArrayList<>(studentMap.values());
+
+        return StudentImportResult.builder()
+                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDate.now())
+                .resolved(students.size()).repeated(students.size()-insertList.size()-updateList.size()-deleteList.size())
+                .deleteList(deleteList).updateList(updateList).insertList(insertList)
+                .build();
     }
 }

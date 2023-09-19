@@ -89,4 +89,13 @@
         AND `courseId` = #{courseId}
         AND `classId` = #{classId}
     </select>
+
+    <select id="getLastUpdateTime" resultType="java.time.LocalDate">
+        SELECT
+            UPDATE_TIME
+        FROM
+            INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = 'bot'
+          AND TABLE_NAME = 'Student';
+    </select>
 </mapper>

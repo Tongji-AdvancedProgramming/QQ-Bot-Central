@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.tongji.programming.pojo.Student;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -106,4 +107,10 @@ public interface StudentMapper {
      * @return 等于len表示成功，其余失败
      */
     Integer insertStudents(@Param("student") List<Student> student);
+
+    /**
+     * 查询数据库最后更新时间
+     * @return 最后更新时间
+     */
+    LocalDate getLastUpdateTime();
 }

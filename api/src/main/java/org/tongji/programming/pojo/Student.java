@@ -1,5 +1,6 @@
 package org.tongji.programming.pojo;
 
+import com.google.common.base.Objects;
 import lombok.Builder;
 import lombok.Data;
 
@@ -36,4 +37,17 @@ public class Student implements Serializable {
      * 班号
      */
     private String classId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equal(stuNo, student.stuNo) && Objects.equal(major, student.major) && Objects.equal(name, student.name) && Objects.equal(courseId, student.courseId) && Objects.equal(classId, student.classId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(stuNo, major, name, courseId, classId);
+    }
 }
