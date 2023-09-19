@@ -1,5 +1,6 @@
 package org.tongji.programming.controller;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +96,7 @@ public class StudentController {
 
                 var jedis = jedisPool.getResource();
                 jedis.select(2);
-                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
+                jedis.setex(result.getRandomId(), 600L, JSON.toJSONString(result));
 
                 return APIDataResponse.Success(result);
             } catch (Exception e) {
@@ -108,7 +109,7 @@ public class StudentController {
 
                 var jedis = jedisPool.getResource();
                 jedis.select(2);
-                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
+                jedis.setex(result.getRandomId(), 600L, JSON.toJSONString(result));
 
                 return APIDataResponse.Success(result);
             } catch (Exception e) {
@@ -118,11 +119,10 @@ public class StudentController {
             try {
                 var xlsxStream = excelXlsToXlsxService.convertXlsToXlsx(file.getInputStream());
                 var result = studentImportService.resolveExcel(xlsxStream);
-                var mapper = JSONHelper.getLossyMapper();
 
                 var jedis = jedisPool.getResource();
                 jedis.select(2);
-                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
+                jedis.setex(result.getRandomId(), 600L, JSON.toJSONString(result));
 
                 return APIDataResponse.Success(result);
             } catch (Exception e) {
@@ -136,7 +136,7 @@ public class StudentController {
     /**
      * 确认导入
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "confirm", method = RequestMethod.POST)
     public APIResponse confirmImport(@RequestParam("id") String operationId) {
         var jedis = jedisPool.getResource();
         jedis.select(2);
@@ -145,11 +145,13 @@ public class StudentController {
             return APIResponse.Fail("4000", "导入操作已过期，请重试。");
         }
 
-        var mapper = JSONHelper.getLossyMapper();
+        log.info("OperationJson: {}", operationJson);
+
         StudentImportResult operation;
         try {
-            operation = mapper.readValue(operationJson, StudentImportResult.class);
+            operation = JSON.parseObject(operationJson, StudentImportResult.class);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return APIResponse.Fail("4001", "系统内部异常，请重试（Json）");
         }
 

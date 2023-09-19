@@ -27,8 +27,6 @@ public class StudentImportResult {
     /**
      * 解析完成时的时间
      */
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime resolvedTime;
 
     /**
