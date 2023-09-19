@@ -17,6 +17,15 @@
         </foreach>
     </insert>
 
+    <update id="updateById">
+        UPDATE `Student`
+        SET major=#{student.major},
+            name=#{student.name},
+            classId=#{student.classId}
+        WHERE stuNo = #{student.stuNo}
+          AND courseId = #{student.courseId}
+    </update>
+
     <delete id="deleteById">
         DELETE
         FROM `Student`
@@ -86,15 +95,13 @@
         SELECT *
         FROM `Student`
         WHERE 1 = 1
-        AND `courseId` = #{courseId}
-        AND `classId` = #{classId}
+          AND `courseId` = #{courseId}
+          AND `classId` = #{classId}
     </select>
 
     <select id="getLastUpdateTime" resultType="java.time.LocalDate">
-        SELECT
-            UPDATE_TIME
-        FROM
-            INFORMATION_SCHEMA.TABLES
+        SELECT UPDATE_TIME
+        FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = 'bot'
           AND TABLE_NAME = 'Student';
     </select>

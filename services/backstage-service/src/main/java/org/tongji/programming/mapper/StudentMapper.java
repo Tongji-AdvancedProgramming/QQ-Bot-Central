@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.tongji.programming.pojo.Student;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -71,6 +72,11 @@ public interface StudentMapper {
     Student selectById(@Param("id") String id, @Param("courseId") String courseId);
 
     /**
+     * 更新
+     */
+    int updateById(@Param("student") Student student);
+
+    /**
      * 根据班级查询
      * @param courseId 课程号
      * @param classId 班级号
@@ -112,5 +118,5 @@ public interface StudentMapper {
      * 查询数据库最后更新时间
      * @return 最后更新时间
      */
-    LocalDate getLastUpdateTime();
+    LocalDateTime getLastUpdateTime();
 }

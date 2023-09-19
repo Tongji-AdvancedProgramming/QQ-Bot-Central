@@ -8,14 +8,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
+import org.tongji.programming.dto.StudentImportService.StudentImportResult;
 import org.tongji.programming.dto.StudentService.GetStudents;
 import org.tongji.programming.helper.JSONHelper;
+import org.tongji.programming.http.ExcelXlsToXlsxService;
 import org.tongji.programming.mapper.CourseMapper;
 import org.tongji.programming.mapper.StudentMapper;
 import org.tongji.programming.service.StudentImportService;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +42,9 @@ public class StudentController {
     public void setJedisPool(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }
+
+    @Resource
+    ExcelXlsToXlsxService excelXlsToXlsxService;
 
     @RequestMapping(method = RequestMethod.GET)
     public APIResponse GetAllStudents(
@@ -87,7 +93,7 @@ public class StudentController {
 
                 var jedis = jedisPool.getResource();
                 jedis.select(2);
-                jedis.setex(result.getRandomId(), 300L, mapper.writeValueAsString(result));
+                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
 
                 return APIDataResponse.Success(result);
             } catch (Exception e) {
@@ -100,7 +106,21 @@ public class StudentController {
 
                 var jedis = jedisPool.getResource();
                 jedis.select(2);
-                jedis.setex(result.getRandomId(), 300L, mapper.writeValueAsString(result));
+                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
+
+                return APIDataResponse.Success(result);
+            } catch (Exception e) {
+                return APIResponse.Fail("4000", e.getLocalizedMessage());
+            }
+        } else if (Objects.equals(type, "application/vnd.ms-excel")) {
+            try {
+                var xlsxStream = excelXlsToXlsxService.convertXlsToXlsx(file.getInputStream());
+                var result = studentImportService.resolveExcel(xlsxStream);
+                var mapper = JSONHelper.getLossyMapper();
+
+                var jedis = jedisPool.getResource();
+                jedis.select(2);
+                jedis.setex(result.getRandomId(), 600L, mapper.writeValueAsString(result));
 
                 return APIDataResponse.Success(result);
             } catch (Exception e) {
@@ -111,7 +131,41 @@ public class StudentController {
         return APIResponse.Fail("4000", "意外的文件格式");
     }
 
-    @Transactional
+    /**
+     * 确认导入
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @RequestMapping(method = RequestMethod.POST)
+    public APIResponse confirmImport(@RequestParam("id") String operationId) {
+        var jedis = jedisPool.getResource();
+        jedis.select(2);
+        var operationJson = jedis.get(operationId);
+        if (operationJson == null) {
+            return APIResponse.Fail("4000", "导入操作已过期，请重试。");
+        }
+
+        var mapper = JSONHelper.getLossyMapper();
+        StudentImportResult operation;
+        try {
+            operation = mapper.readValue(operationJson, StudentImportResult.class);
+        } catch (Exception e) {
+            return APIResponse.Fail("4001", "系统内部异常，请重试（Json）");
+        }
+
+        if (!operation.getRandomId().equals(operationId)) {
+            return APIResponse.Fail("4001", "系统内部异常，请重试（id不匹配）");
+        }
+
+        var lastUpdate = studentMapper.getLastUpdateTime();
+        if (lastUpdate != null && lastUpdate.isAfter(operation.getResolvedTime())) {
+            return APIResponse.Fail("4002", "确认导入期间数据库已发生变化，请重新上传Excel以解析最新的导入结果。");
+        }
+
+        // 前序检查已完成，开始执行导入
+        return studentImportService.performResolvedOperation(operation);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     @RequestMapping(method = RequestMethod.DELETE)
     public APIResponse Delete(@RequestParam("id") List<String> ids, @RequestParam("cid") List<String> courseIds) {
         if (ids.size() != courseIds.size()) {

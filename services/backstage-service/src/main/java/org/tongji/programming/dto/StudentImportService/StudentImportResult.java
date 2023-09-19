@@ -1,5 +1,9 @@
 package org.tongji.programming.dto.StudentImportService;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.tongji.programming.pojo.Student;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,7 +27,9 @@ public class StudentImportResult {
     /**
      * 解析完成时的时间
      */
-    private LocalDate resolvedTime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime resolvedTime;
 
     /**
      * 所有成功解析的学生

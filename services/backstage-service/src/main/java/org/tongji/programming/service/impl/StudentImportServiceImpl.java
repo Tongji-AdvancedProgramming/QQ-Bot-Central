@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -110,7 +111,7 @@ public class StudentImportServiceImpl implements StudentImportService {
         deleteList = new ArrayList<>(studentMap.values());
 
         return StudentImportResult.builder()
-                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDate.now())
+                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDateTime.now())
                 .resolved(students.size()).repeated(students.size()-insertList.size()-updateList.size()-deleteList.size())
                 .deleteList(deleteList).updateList(updateList).insertList(insertList)
                 .build();
@@ -253,9 +254,29 @@ public class StudentImportServiceImpl implements StudentImportService {
         deleteList = new ArrayList<>(studentMap.values());
 
         return StudentImportResult.builder()
-                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDate.now())
-                .resolved(students.size()).repeated(students.size()-insertList.size()-updateList.size()-deleteList.size())
+                .randomId(RandomStringUtils.randomAlphanumeric(8)).resolvedTime(LocalDateTime.now())
+                .resolved(students.size()).repeated(students.size()-updateList.size()-deleteList.size())
                 .deleteList(deleteList).updateList(updateList).insertList(insertList)
                 .build();
+    }
+
+    @Override
+    public APIResponse performResolvedOperation(StudentImportResult operation) {
+        // 执行插入操作
+        studentMapper.insertStudents(operation.getInsertList());
+
+        // 执行更新操作
+        operation.getUpdateList().forEach(student -> {
+            studentMapper.updateById(student);
+        });
+
+        // 执行删除操作
+        operation.getDeleteList().forEach(student -> {
+            studentMapper.deleteById(student.getStuNo(),student.getCourseId());
+        });
+
+        // 备份本次操作到日志
+
+        return null;
     }
 }
