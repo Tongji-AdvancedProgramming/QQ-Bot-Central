@@ -48,7 +48,4 @@ public class ChiakiController {
         return checkCardService.addAssistants();
     }
 
-
-
-
 }

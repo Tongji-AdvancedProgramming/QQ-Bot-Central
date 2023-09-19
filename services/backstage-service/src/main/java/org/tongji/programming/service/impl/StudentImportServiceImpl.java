@@ -1,5 +1,6 @@
 package org.tongji.programming.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.csvreader.CsvReader;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
@@ -14,6 +15,7 @@ import org.tongji.programming.dto.StudentImportService.StudentImportResult;
 import org.tongji.programming.helper.DirectoryDeleter;
 import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.mapper.CourseMapper;
+import org.tongji.programming.mapper.StudentLogMapper;
 import org.tongji.programming.mapper.StudentMapper;
 import org.tongji.programming.pojo.Student;
 import org.tongji.programming.service.StudentImportService;
@@ -42,6 +44,8 @@ public class StudentImportServiceImpl implements StudentImportService {
 
     CourseMapper courseMapper;
 
+    StudentLogMapper studentLogMapper;
+
     @Autowired
     public void setStudentMapper(StudentMapper studentMapper) {
         this.studentMapper = studentMapper;
@@ -50,6 +54,11 @@ public class StudentImportServiceImpl implements StudentImportService {
     @Autowired
     public void setCourseMapper(CourseMapper courseMapper) {
         this.courseMapper = courseMapper;
+    }
+
+    @Autowired
+    public void setStudentLogMapper(StudentLogMapper studentLogMapper) {
+        this.studentLogMapper = studentLogMapper;
     }
 
     @Override
@@ -261,6 +270,7 @@ public class StudentImportServiceImpl implements StudentImportService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public APIResponse performResolvedOperation(StudentImportResult operation) {
         // 执行插入操作
         studentMapper.insertStudents(operation.getInsertList());
@@ -276,7 +286,9 @@ public class StudentImportServiceImpl implements StudentImportService {
         });
 
         // 备份本次操作到日志
+        var jsonString = JSON.toJSON(operation).toString();
+        studentLogMapper.addLog(jsonString);
 
-        return null;
+        return APIResponse.Success();
     }
 }

@@ -14,5 +14,5 @@ public interface CheckCardService {
 
     boolean isAssistants(Long userId);
 
-    String checkCard(Long groupId, Long userId,boolean debug);
+    String checkCard(Long groupId, Long userId, boolean debug);
 }

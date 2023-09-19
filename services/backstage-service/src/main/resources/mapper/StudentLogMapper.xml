@@ -5,4 +5,9 @@
 
 <mapper namespace="org.tongji.programming.mapper.StudentLogMapper">
 
+    <insert id="addLog">
+        INSERT INTO Student_log (datetime, content)
+        VALUES (NOW(), #{contentJson})
+    </insert>
+
 </mapper>

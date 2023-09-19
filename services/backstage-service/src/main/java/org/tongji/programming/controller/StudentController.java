@@ -1,5 +1,6 @@
 package org.tongji.programming.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @RequestMapping("student")
 public class StudentController {
@@ -134,7 +136,6 @@ public class StudentController {
     /**
      * 确认导入
      */
-    @Transactional(rollbackFor = Exception.class)
     @RequestMapping(method = RequestMethod.POST)
     public APIResponse confirmImport(@RequestParam("id") String operationId) {
         var jedis = jedisPool.getResource();
@@ -162,7 +163,11 @@ public class StudentController {
         }
 
         // 前序检查已完成，开始执行导入
-        return studentImportService.performResolvedOperation(operation);
+        try {
+            return studentImportService.performResolvedOperation(operation);
+        } catch (Exception e) {
+            return APIResponse.Fail("4001", "导入数据库时失败：" + e.getMessage());
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

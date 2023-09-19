@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper
 @Repository
 public interface StudentLogMapper {
-
+    int addLog(@Param("contentJson") String contentJson);
 }
