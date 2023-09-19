@@ -99,7 +99,7 @@
           AND `classId` = #{classId}
     </select>
 
-    <select id="getLastUpdateTime" resultType="java.time.LocalDate">
+    <select id="getLastUpdateTime" resultType="java.time.LocalDateTime">
         SELECT UPDATE_TIME
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = 'bot'

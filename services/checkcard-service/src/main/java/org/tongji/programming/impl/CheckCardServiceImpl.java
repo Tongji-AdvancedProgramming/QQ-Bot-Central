@@ -21,7 +21,6 @@ import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.pojo.Student;
 import org.tongji.programming.service.CheckCardService;
 import org.tongji.programming.service.CourseService;
-import org.tongji.programming.service.GroupUtilService;
 import org.tongji.programming.service.StudentService;
 
 import javax.annotation.Resource;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.*;
 
 @Component
@@ -139,13 +139,13 @@ public class CheckCardServiceImpl implements CheckCardService {
             return sendMsg("你无权使用此功能");
         }
 
-        var courseId = courseService.getCourseIdFromQQGroupId(groupId.toString());
+        var courseIds = courseService.getCourseIdFromQQGroupId(groupId.toString());
 
         var studentlist = handlelist(botGroupService.getGroupMemberList(groupId, true));
         StringBuilder responseMsg = new StringBuilder();
         responseMsg.append("请以下同学改正群名片(提醒第三次将被踢出群)：\n");
         //System.out.println(studentlist);
-        //var courseId= courseService.getCourseIdFromQQGroupId(String.valueOf(groupId));
+        //var courseIds= courseService.getCourseIdFromQQGroupId(String.valueOf(groupId));
         String[] majorList = {"测绘", "软工", "计科", "光电", "微电子", "电气", "电信", "通信", "AI", "自动化",
                 "信安", "大数据", "计拔", "应物", "信管", "工力", "数学", "新能源", "文管", "汽车"};
         for (CheckResult result : studentlist) {
@@ -268,16 +268,23 @@ public class CheckCardServiceImpl implements CheckCardService {
                     student.setName(studentInfoList[2]);
                     student.setMajor(studentInfoList[1]);
                     student.setClassId(null);
-                    student.setCourseId(courseId);
                     student.setStuNo(studentInfoList[0]);
                     //System.out.println(student);
                     //未实现：查询学生信息是否正确
 
-                    var isValid = studentService.StudentValid(student);
+                    AtomicInteger isValid = new AtomicInteger();
+
+                    for(var courseId: courseIds){
+                        student.setCourseId(courseId);
+                        isValid.set(studentService.StudentValid(student));
+                        if(isValid.get()==0)
+                            break;
+                    }
+
                     //System.err.println(isValid);
                     //System.err.println(student);
 
-                    if (isValid == 1) {
+                    if (isValid.get() == 1) {
                         result.failedreason = "学生信息无法匹配";
                         result.failedtimes += 1;
                         checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
@@ -287,7 +294,7 @@ public class CheckCardServiceImpl implements CheckCardService {
                             responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                         }
-                    } else if (isValid == 2) {
+                    } else if (isValid.get() == 2) {
                         result.failedreason = "找不到学生信息";
                         result.failedtimes += 1;
                         checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);

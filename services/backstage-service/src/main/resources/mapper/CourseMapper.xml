@@ -32,9 +32,15 @@
 
     <select id="selectAllWithGroupId" resultType="org.tongji.programming.pojo.Course" resultMap="CourseWithGroupIds">
         SELECT Course.*,
-               QG.id
+               gc.groupId
         FROM Course
-                 LEFT JOIN bot.QQGroup QG on Course.id = QG.courseId
+                 LEFT JOIN bot.group_course gc on Course.id = gc.courseId
+    </select>
+
+    <select id="selectCourseIdByGroupId" resultType="java.lang.String">
+        SELECT courseId
+        FROM group_course
+        WHERE groupId = #{groupId}
     </select>
 
     <delete id="deleteById">

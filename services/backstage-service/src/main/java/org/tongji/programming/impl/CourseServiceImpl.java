@@ -4,26 +4,25 @@ import lombok.var;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tongji.programming.mapper.CourseMapper;
 import org.tongji.programming.mapper.QQGroupMapper;
 import org.tongji.programming.service.CourseService;
+
+import java.util.List;
 
 @Component
 @DubboService
 public class CourseServiceImpl implements CourseService {
 
-    QQGroupMapper qqGroupMapper;
+    CourseMapper courseMapper;
 
     @Autowired
-    public void setQqGroupMapper(QQGroupMapper qqGroupMapper) {
-        this.qqGroupMapper = qqGroupMapper;
+    public void setCourseMapper(CourseMapper courseMapper) {
+        this.courseMapper = courseMapper;
     }
 
     @Override
-    public String getCourseIdFromQQGroupId(String QQGroupId) {
-        var group = qqGroupMapper.selectById(QQGroupId);
-        if (group != null)
-            return group.getCourseId();
-        else
-            return null;
+    public List<String> getCourseIdFromQQGroupId(String QQGroupId) {
+        return courseMapper.selectCourseIdByGroupId(QQGroupId);
     }
 }

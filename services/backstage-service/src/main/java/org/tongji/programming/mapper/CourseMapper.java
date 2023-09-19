@@ -24,6 +24,13 @@ public interface CourseMapper {
     List<CourseWithGroup> selectAllWithGroupId();
 
     /**
+     * 根据群号查询课程代码
+     * @param groupId 群号
+     * @return 课程代码（列表）
+     */
+    List<String> selectCourseIdByGroupId(@Param("groupId") String groupId);
+
+    /**
      * 根据课号查询
      * @param id 课程编号
      * @return 课程

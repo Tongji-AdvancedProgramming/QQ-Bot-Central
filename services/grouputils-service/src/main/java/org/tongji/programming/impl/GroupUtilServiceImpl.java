@@ -40,7 +40,7 @@ public class GroupUtilServiceImpl implements GroupUtilService {
 
         // 收到加群申请，首先检查这个群是否被管理
         var course = courseService.getCourseIdFromQQGroupId(event.getGroupId());
-        if (course == null) {
+        if (course.isEmpty()) {
             return "{}";
         }
 
@@ -82,15 +82,17 @@ public class GroupUtilServiceImpl implements GroupUtilService {
                 continue;
             }
             // 假设这个是人名，检查一次
-            var student = Student.builder().name(requestParam[i]).stuNo(stuNo).courseId(course).build();
-            if (studentService.StudentValid(student) != 2) {
-                log.info("处理例程通过");
-                // 检查通过
-                var response = GroupRequestEventResponse.builder()
-                        .approve(true)
-                        .build();
-                var mapper = JSONHelper.getLossyMapper();
-                return mapper.writeValueAsString(response);
+            var student = Student.builder().name(requestParam[i]).stuNo(stuNo).build();
+            for (var courseId : course) {
+                if (studentService.StudentValid(student) != 2) {
+                    log.info("处理例程通过");
+                    // 检查通过
+                    var response = GroupRequestEventResponse.builder()
+                            .approve(true)
+                            .build();
+                    var mapper = JSONHelper.getLossyMapper();
+                    return mapper.writeValueAsString(response);
+                }
             }
         }
 

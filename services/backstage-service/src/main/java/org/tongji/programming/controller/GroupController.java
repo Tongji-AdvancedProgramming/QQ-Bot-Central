@@ -15,6 +15,8 @@ import org.tongji.programming.pojo.QQGroup;
 import org.tongji.programming.service.BotSelfService;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("group")
@@ -53,6 +55,20 @@ public class GroupController {
         }
     }
 
+    @RequestMapping(value = "link", method = RequestMethod.POST)
+    public APIResponse linkGroupWithCourse(@RequestPart String courseId, @RequestPart List<String> groupId) {
+        AtomicInteger ri = new AtomicInteger();
+        groupId.forEach(id -> {
+            ri.addAndGet(qqGroupMapper.linkCourseAndGroup(courseId, id));
+        });
+
+        if (ri.get() == groupId.size()) {
+            return APIResponse.Success();
+        } else {
+            return APIResponse.Fail("4005", String.format("成功连接%d个群，部分群连接失败，请刷新查看。", ri.get()));
+        }
+    }
+
     @RequestMapping(value = "validate", method = RequestMethod.POST)
     public APIResponse validateGroup(@RequestParam("group_id") String groupId) {
 
@@ -64,7 +80,7 @@ public class GroupController {
         var response = botGroupService.getGroupInfo(Long.parseLong(groupId), true);
 
         if (!response.getStatus().equals("ok")) {
-            if(response.getMsg().equals("GROUP_NOT_FOUND"))
+            if (response.getMsg().equals("GROUP_NOT_FOUND"))
                 return APIDataResponse.Success(ValidateGroupResult.builder().botId(loginInfo.getUserId())
                         .nickname(loginInfo.getNickname())
                         .message("未找到该群，请检查群号是否正确或该群是否可被按群号搜索。").build());
@@ -83,20 +99,20 @@ public class GroupController {
             }
 
             var groupMemberInfoData = JSONObject.toJavaObject(response.getData(), GroupMemberInfo.class);
-            if(groupMemberInfoData.getRole().equals("member")){
+            if (groupMemberInfoData.getRole().equals("member")) {
                 isAdmin = false;
             }
         }
 
         ValidateGroupResult result = null;
 
-        if(!inGroup){
+        if (!inGroup) {
             result = ValidateGroupResult.builder().botId(loginInfo.getUserId()).nickname(loginInfo.getNickname())
                     .message("Bot未在所填入的群内，请检查群号是否正确，或群号是否可被搜索。").build();
-        }else if(isAdmin){
+        } else if (isAdmin) {
             result = ValidateGroupResult.builder().botId(loginInfo.getUserId()).nickname(loginInfo.getNickname())
                     .message("Bot已拥有该群管理权限，配置正确！").build();
-        }else{
+        } else {
             result = ValidateGroupResult.builder().botId(loginInfo.getUserId()).nickname(loginInfo.getNickname())
                     .message("Bot已在群内，但尚无管理权限。").build();
         }

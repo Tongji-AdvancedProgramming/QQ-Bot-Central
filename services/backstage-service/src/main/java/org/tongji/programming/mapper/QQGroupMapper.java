@@ -31,4 +31,20 @@ public interface QQGroupMapper {
      * @return 更改的行
      */
     int insertOrUpdate(@Param("group") QQGroup group);
+
+    /**
+     * 连接群和课程
+     * @param courseId 课程ID
+     * @param groupId 群号
+     * @return 数据库变化行数
+     */
+    int linkCourseAndGroup(@Param("courseId") String courseId, @Param("groupId") String groupId);
+
+    /**
+     * 断开群和课程
+     * @param courseId 课程ID
+     * @param groupId 群号
+     * @return 数据库变化行数
+     */
+    int unlinkCourseAndGroup(@Param("courseId") String courseId, @Param("groupId") String groupId);
 }

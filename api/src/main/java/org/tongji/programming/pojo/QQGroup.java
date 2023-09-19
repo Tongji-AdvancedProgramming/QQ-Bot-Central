@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,11 +16,6 @@ public class QQGroup {
      * 群号
      */
     private String id;
-
-    /**
-     * 关联课号
-     */
-    private String courseId;
 
     /**
      * 备注
