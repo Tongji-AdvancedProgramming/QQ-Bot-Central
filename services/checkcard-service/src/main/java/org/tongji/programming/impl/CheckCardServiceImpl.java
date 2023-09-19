@@ -20,6 +20,8 @@ import org.tongji.programming.pojo.CheckResult;
 import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.pojo.Student;
 import org.tongji.programming.service.CheckCardService;
+import org.tongji.programming.service.CourseService;
+import org.tongji.programming.service.GroupUtilService;
 import org.tongji.programming.service.StudentService;
 
 import javax.annotation.Resource;
@@ -100,6 +102,9 @@ public class CheckCardServiceImpl implements CheckCardService {
     @DubboReference
     StudentService studentService;
 
+    @DubboReference
+    CourseService courseService;
+
     AssistantsMapper assistantsMapper;
 
     @Autowired
@@ -134,6 +139,8 @@ public class CheckCardServiceImpl implements CheckCardService {
             return sendMsg("你无权使用此功能");
         }
 
+        var courseId = courseService.getCourseIdFromQQGroupId(groupId.toString());
+
         var studentlist = handlelist(botGroupService.getGroupMemberList(groupId, true));
         StringBuilder responseMsg = new StringBuilder();
         responseMsg.append("请以下同学改正群名片(提醒第三次将被踢出群)：\n");
@@ -157,20 +164,20 @@ public class CheckCardServiceImpl implements CheckCardService {
             String[] studentInfoList = result.getCard().split("-");
             //System.err.println(Arrays.toString(studentInfoList));
             if (Arrays.asList(studentInfoList).contains("助教") || Arrays.asList(studentInfoList).contains("围观")) {
-                if (!isAssistants(result.studentId)) {
-                    result.failedreason = "你是什么助教？";
-                    result.failedtimes += 1;
-                    checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                    if(!debug) {
-                        responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                    }else{
-                        responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
-
-                    }
-                } else {
+//                if (!isAssistants(result.studentId)) {
+//                    result.failedreason = "你是什么助教？";
+//                    result.failedtimes += 1;
+//                    checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
+//                    if(!debug) {
+//                        responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
+//                    }else{
+//                        responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
+//
+//                    }
+//                } else {
                     checkPassFlag = true;
                     assistantsFlag = true;
-                }
+//                }
             } else if (Arrays.asList(studentInfoList).contains("沈坚")) {
                 if (result.studentId == 278787983) {
                     checkPassFlag = true;
@@ -187,20 +194,20 @@ public class CheckCardServiceImpl implements CheckCardService {
                     }
                 }
             } else if (Arrays.asList(studentInfoList).contains("bot") || Arrays.asList(studentInfoList).contains("Bot")) {
-                if (!isAssistants(result.studentId)) {
-                    result.failedreason = "你是什么bot？";
-                    result.failedtimes += 1;
-                    checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                    if(!debug) {
-                        responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                    }else{
-                        responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
-
-                    }
-                } else {
+//                if (!isAssistants(result.studentId)) {
+//                    result.failedreason = "你是什么bot？";
+//                    result.failedtimes += 1;
+//                    checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
+//                    if(!debug) {
+//                        responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
+//                    }else{
+//                        responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
+//
+//                    }
+//                } else {
                     checkPassFlag = true;
                     assistantsFlag = true;
-                }
+//                }
             } else if (studentInfoList.length < 3) {
                 result.failedreason = "名片未用-分为三项";
                 result.failedtimes += 1;
@@ -261,7 +268,7 @@ public class CheckCardServiceImpl implements CheckCardService {
                     student.setName(studentInfoList[2]);
                     student.setMajor(studentInfoList[1]);
                     student.setClassId(null);
-                    student.setCourseId("100717");
+                    student.setCourseId(courseId);
                     student.setStuNo(studentInfoList[0]);
                     //System.out.println(student);
                     //未实现：查询学生信息是否正确
