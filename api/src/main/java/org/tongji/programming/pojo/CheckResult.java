@@ -21,6 +21,11 @@ public class CheckResult {
     public String card;
 
     /**
+     * 角色
+     */
+    public String role;
+
+    /**
      * 检查结果
      */
     public boolean checkresult;

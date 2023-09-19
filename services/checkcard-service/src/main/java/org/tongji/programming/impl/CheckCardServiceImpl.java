@@ -134,7 +134,7 @@ public class CheckCardServiceImpl implements CheckCardService {
     }
 
     @Override
-    public String checkCard(Long groupId, Long userId,boolean debug) {
+    public String checkCard(Long groupId, Long userId, boolean debug) {
         if (!isAssistants(userId)) {
             return sendMsg("你无权使用此功能");
         }
@@ -163,7 +163,11 @@ public class CheckCardServiceImpl implements CheckCardService {
 
             String[] studentInfoList = result.getCard().split("-");
             //System.err.println(Arrays.toString(studentInfoList));
-            if (Arrays.asList(studentInfoList).contains("助教") || Arrays.asList(studentInfoList).contains("围观")) {
+            if(!result.getRole().equals("member")){
+                checkPassFlag = true;
+                assistantsFlag = true;
+            }
+            else if (Arrays.asList(studentInfoList).contains("助教") || Arrays.asList(studentInfoList).contains("围观")) {
 //                if (!isAssistants(result.studentId)) {
 //                    result.failedreason = "你是什么助教？";
 //                    result.failedtimes += 1;
@@ -175,8 +179,8 @@ public class CheckCardServiceImpl implements CheckCardService {
 //
 //                    }
 //                } else {
-                    checkPassFlag = true;
-                    assistantsFlag = true;
+                checkPassFlag = true;
+                assistantsFlag = true;
 //                }
             } else if (Arrays.asList(studentInfoList).contains("沈坚")) {
                 if (result.studentId == 278787983) {
@@ -186,9 +190,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                     result.failedreason = "大胆！敢冒充渣哥？";
                     result.failedtimes += 2;
                     checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                    if(!debug) {
+                    if (!debug) {
                         responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                    }else{
+                    } else {
                         responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                     }
@@ -205,16 +209,16 @@ public class CheckCardServiceImpl implements CheckCardService {
 //
 //                    }
 //                } else {
-                    checkPassFlag = true;
-                    assistantsFlag = true;
+                checkPassFlag = true;
+                assistantsFlag = true;
 //                }
             } else if (studentInfoList.length < 3) {
                 result.failedreason = "名片未用-分为三项";
                 result.failedtimes += 1;
                 checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                if(!debug) {
+                if (!debug) {
                     responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                }else{
+                } else {
                     responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                 }
@@ -222,9 +226,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                 result.failedreason = "学号格式不正确";
                 result.failedtimes += 1;
                 checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                if(!debug) {
+                if (!debug) {
                     responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                }else{
+                } else {
                     responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                 }
@@ -242,9 +246,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                         result.failedreason = "班级格式不正确";
                         result.failedtimes += 1;
                         checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                        if(!debug) {
+                        if (!debug) {
                             responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                        }else{
+                        } else {
                             responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                         }
@@ -254,9 +258,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                 result.failedreason = "专业名称不正确";
                 result.failedtimes += 1;
                 checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                if(!debug) {
+                if (!debug) {
                     responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                }else{
+                } else {
                     responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                 }
@@ -274,10 +278,10 @@ public class CheckCardServiceImpl implements CheckCardService {
 
                     AtomicInteger isValid = new AtomicInteger();
 
-                    for(var courseId: courseIds){
+                    for (var courseId : courseIds) {
                         student.setCourseId(courseId);
                         isValid.set(studentService.StudentValid(student));
-                        if(isValid.get()==0)
+                        if (isValid.get() == 0)
                             break;
                     }
 
@@ -288,9 +292,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                         result.failedreason = "学生信息无法匹配";
                         result.failedtimes += 1;
                         checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                        if(!debug) {
+                        if (!debug) {
                             responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                        }else{
+                        } else {
                             responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                         }
@@ -298,9 +302,9 @@ public class CheckCardServiceImpl implements CheckCardService {
                         result.failedreason = "找不到学生信息";
                         result.failedtimes += 1;
                         checkResultMapper.updateFailedById(result.getStudentId(), result.getFailedtimes(), result.failedreason);
-                        if(!debug) {
+                        if (!debug) {
                             responseMsg.append(String.format("[CQ:at,qq=%s] %s 提醒次数：%d\n", result.getStudentId(), result.getFailedreason(), result.getFailedtimes()));
-                        }else{
+                        } else {
                             responseMsg.append(String.format("QQ:%-11s||Card:%-20s||%-16s 提醒次数：%d\n", result.getStudentId(), result.getCard(), result.getFailedreason(), result.getFailedtimes()));
 
                         }
@@ -319,7 +323,7 @@ public class CheckCardServiceImpl implements CheckCardService {
                 }
             }
             if (result.getFailedtimes() >= 3) {
-                if(!debug)
+                if (!debug)
                     botGroupService.setGroupKick(groupId, result.getStudentId(), false);
                 checkResultMapper.deleteById(result.getStudentId());
             }
@@ -330,8 +334,8 @@ public class CheckCardServiceImpl implements CheckCardService {
 
         System.out.println(responseMsg);
 
-        if(debug){
-            botPrivateService.sendPrivateMsg(groupId,userId, String.valueOf(responseMsg),true);
+        if (debug) {
+            botPrivateService.sendPrivateMsg(groupId, userId, String.valueOf(responseMsg), true);
             return null;
         }
 
