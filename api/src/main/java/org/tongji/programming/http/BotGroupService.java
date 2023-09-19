@@ -50,4 +50,5 @@ public interface BotGroupService {
      */
     @Get("http://host.docker.internal:5700/set_group_kick")
     void setGroupKick(@Query("group_id") long groupId, @Query("user_id") long userId, @Query("reject_add_request") boolean rejectAddRequest);
+
 }

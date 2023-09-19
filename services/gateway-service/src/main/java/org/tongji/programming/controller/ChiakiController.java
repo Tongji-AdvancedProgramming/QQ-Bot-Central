@@ -35,7 +35,12 @@ public class ChiakiController {
 
     @CommandMapping("检查群名片")
     public String checkCard(MessageUniversalReport event){
-        return checkCardService.checkCard(event.getGroupId(), event.getUserId());
+        return checkCardService.checkCard(event.getGroupId(), event.getUserId(),false);
+    }
+
+    @CommandMapping("检查群名片 debug")
+    public String checkCard_DebugMode(MessageUniversalReport event){
+        return checkCardService.checkCard(event.getGroupId(), event.getUserId(),true);
     }
 
     @CommandMapping("update")
