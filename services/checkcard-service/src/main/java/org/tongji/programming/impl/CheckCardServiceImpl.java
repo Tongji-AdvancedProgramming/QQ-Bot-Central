@@ -79,6 +79,7 @@ public class CheckCardServiceImpl implements CheckCardService {
             //System.out.println(obj);
             Long userId = Long.parseLong(obj.get("user_id").toString());
             result.card = obj.get("card").toString();
+            result.role = obj.get("role").toString();
             result.studentId = userId;
             result.checkresult = false;
             result.failedreason = null;
