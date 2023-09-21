@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.mapper.QQGroupMapper">
+    <insert id="insertOrUpdate">
+        insert into QQGroup (id, courseId, note)
+        values (#{group.id},#{group.courseId},#{group.note})
+        on duplicate key update
+        courseId = #{group.courseId},
+        note = #{group.note};
+    </insert>
+
+    <select id="selectByCourseId" resultType="org.tongji.programming.pojo.QQGroup">
+        select *
+        from QQGroup
+        where courseId = #{courseId};
+    </select>
+
+    <select id="selectById" resultType="org.tongji.programming.pojo.QQGroup">
+        select *
+        from QQGroup
+        where id = #{id};
+    </select>
+</mapper>

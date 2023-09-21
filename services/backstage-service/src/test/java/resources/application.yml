@@ -1,6 +1,6 @@
 dubbo:
   application:
-    name: qq-bot-service-grouputils
+    name: qq-bot-backstage-service
     logger: slf4j
   protocol:
     name: tri
@@ -8,7 +8,7 @@ dubbo:
   registry:
     address: zookeeper://${zookeeper.address:127.0.0.1}:2181
 server:
-  port: 9906
+  port: 9905
 zookeeper:
   address: zookeeper
 spring:
@@ -26,6 +26,6 @@ spring:
         max-idle: 6    #最大空闲数
         max-active: 10 #最大连接数
         min-idle: 2    #最小空闲数
-    timeout: 3000   #连接超时
+    timeout: 2000   #连接超时
 mybatis:
   mapper-locations: classpath:mapper/*.xml
