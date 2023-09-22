@@ -126,7 +126,7 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         jedis.select(dbNum);
 
         // 使用哈希表存储关联数据
-        jedis.hset("message-data", msgId, msg+","+userId);
+        jedis.hset("message-data", msgId, msg + "^##" + userId);
 
         jedis.expire("message-data", expirationTimeInSeconds);
 
@@ -144,7 +144,7 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         jedis.close();
 
         if (userData != null) {
-            return userData.split(",");//第一个是消息内容，第二个是发消息者的QQ号
+            return userData.split("^##");// 第一个是消息内容，第二个是发消息者的QQ号
         } else {
             return null; // 返回null
         }
