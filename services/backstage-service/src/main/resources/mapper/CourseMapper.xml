@@ -8,7 +8,7 @@
         <id column="id" property="id"/>
         <result column="name" property="name"/>
         <collection property="groups" ofType="string">
-            <id column="QG.id"/>
+            <id column="gc.groupId"/>
         </collection>
     </resultMap>
 

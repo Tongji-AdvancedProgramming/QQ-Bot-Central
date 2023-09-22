@@ -5,16 +5,27 @@
 
 <mapper namespace="org.tongji.programming.mapper.QQGroupMapper">
     <insert id="insertOrUpdate">
-        insert into QQGroup (id, courseId, note)
-        values (#{group.id},#{group.courseId},#{group.note})
-        on duplicate key update
-        courseId = #{group.courseId},
-        note = #{group.note};
+        insert into QQGroup (id, note)
+        values (#{group.id}, #{group.note})
+        on duplicate key update note = #{group.note};
     </insert>
+
+    <insert id="linkCourseAndGroup">
+        insert into group_course (groupId, courseId)
+        values (#{groupId}, #{courseId});
+    </insert>
+
+    <delete id="unlinkCourseAndGroup">
+        delete
+        from group_course
+        where courseId = #{courseId}
+          and groupId = #{groupId}
+    </delete>
 
     <select id="selectByCourseId" resultType="org.tongji.programming.pojo.QQGroup">
         select *
         from QQGroup
+                 left join bot.group_course gc on QQGroup.id = gc.groupId
         where courseId = #{courseId};
     </select>
 
@@ -22,5 +33,10 @@
         select *
         from QQGroup
         where id = #{id};
+    </select>
+
+    <select id="selectAll" resultType="org.tongji.programming.pojo.QQGroup">
+        select *
+        from QQGroup
     </select>
 </mapper>
