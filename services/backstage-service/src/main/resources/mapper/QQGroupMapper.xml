@@ -34,4 +34,9 @@
         from QQGroup
         where id = #{id};
     </select>
+
+    <select id="selectAll" resultType="org.tongji.programming.pojo.QQGroup">
+        select *
+        from QQGroup
+    </select>
 </mapper>
