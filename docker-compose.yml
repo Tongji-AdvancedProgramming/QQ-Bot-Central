@@ -17,8 +17,6 @@ services:
     container_name: client
     ports:
       - "9900:9900"
-    depends_on:
-      - gateway
     networks:
       - botnet
     extra_hosts:
@@ -32,8 +30,6 @@ services:
     container_name: demo-service
     ports:
       - "9901:9901"
-    depends_on:
-      - zookeeper
     networks:
       - botnet
     extra_hosts:
@@ -46,8 +42,6 @@ services:
     container_name: backstage-service
     ports:
       - "9905:9905"
-    depends_on:
-      - zookeeper
     networks:
       - botnet
     extra_hosts:
@@ -60,9 +54,6 @@ services:
     container_name: gateway-service
     ports:
       - "9902:9902"
-    depends_on:
-      - demo
-      - backstage
     networks:
       - botnet
     extra_hosts:
@@ -75,9 +66,6 @@ services:
     container_name: grouputils-service
     ports:
       - "9906:9906"
-    depends_on:
-      - demo
-      - backstage
     networks:
       - botnet
     extra_hosts:
@@ -90,9 +78,6 @@ services:
     container_name: checkcard-service
     ports:
       - "9904:9904"
-    depends_on:
-      - demo
-      - backstage
     networks:
       - botnet
     extra_hosts:
