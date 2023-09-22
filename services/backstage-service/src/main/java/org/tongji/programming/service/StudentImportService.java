@@ -1,6 +1,5 @@
 package org.tongji.programming.service;
 
-import org.springframework.web.multipart.MultipartFile;
 import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.dto.StudentImportService.StudentImportResult;
 

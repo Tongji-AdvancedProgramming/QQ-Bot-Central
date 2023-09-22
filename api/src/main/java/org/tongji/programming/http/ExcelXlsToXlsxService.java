@@ -2,7 +2,6 @@ package org.tongji.programming.http;
 
 import com.dtflys.forest.annotation.DataFile;
 import com.dtflys.forest.annotation.Post;
-import com.dtflys.forest.extensions.DownloadFile;
 
 import java.io.InputStream;
 
