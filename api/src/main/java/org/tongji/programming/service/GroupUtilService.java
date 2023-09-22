@@ -10,10 +10,8 @@ import org.tongji.programming.DTO.cqhttp.requestEvent.GroupRequestEvent;
 public interface GroupUtilService {
     String groupRequestHandler(GroupRequestEvent event);
 
-    @SneakyThrows
     void groupMsgStore(MessageUniversalReport event);
 
-    @SneakyThrows
     String groupRecallHandler(NoticeUniversalReport event);
 
     void test();
