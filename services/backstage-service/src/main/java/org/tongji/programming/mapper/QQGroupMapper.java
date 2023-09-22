@@ -10,6 +10,8 @@ import java.util.List;
 @Mapper
 @Repository
 public interface QQGroupMapper {
+    List<QQGroup> selectAll();
+
     /**
      * 根据课号筛选QQ群
      *

@@ -51,4 +51,21 @@ public interface BotGroupService {
     @Get("http://host.docker.internal:5700/set_group_kick")
     void setGroupKick(@Query("group_id") long groupId, @Query("user_id") long userId, @Query("reject_add_request") boolean rejectAddRequest);
 
+    /**
+     * 设置禁言
+     * @param groupId 群号
+     * @param userId 用户QQ
+     * @param banTime 禁言时间（单位：秒）
+     */
+    @Get("http://host.docker.internal:5700/set_group_ban")
+    void setGroupBan(@Query("group_id") long groupId, @Query("user_id") long userId, @Query("duration") long banTime);
+
+    /**
+     * 发送群聊消息
+     * @param groupId 群号
+     * @param msg 消息
+     */
+    @Get("http://host.docker.internal:5700/send_group_msg")
+    void sendGroupMsg(@Query("group_id") long groupId, @Query("message") String msg);
+
 }

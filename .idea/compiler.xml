@@ -16,10 +16,5 @@
         <module name="checkcard-service" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="helloworld-service" target="1.8" />
-      <module name="qq-bot-central-api" target="1.8" />
-      <module name="student-service" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

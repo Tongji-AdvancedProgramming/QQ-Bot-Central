@@ -1,20 +1,33 @@
 package org.tongji.programming.impl;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
+import org.tongji.programming.DTO.cqhttp.NoticeUniversalReport;
 import org.tongji.programming.DTO.cqhttp.requestEvent.GroupRequestEvent;
 import org.tongji.programming.DTO.cqhttp.requestEvent.GroupRequestEventResponse;
 import org.tongji.programming.helper.JSONHelper;
+import org.tongji.programming.http.BotGroupService;
 import org.tongji.programming.pojo.Student;
+import org.tongji.programming.service.CheckCardService;
 import org.tongji.programming.service.CourseService;
 import org.tongji.programming.service.GroupUtilService;
 import org.tongji.programming.service.StudentService;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
+import javax.annotation.Resource;
 import java.util.regex.Pattern;
+
+import static java.lang.Long.parseLong;
+import java.util.Random;
 
 @Slf4j
 @DubboService
@@ -98,5 +111,143 @@ public class GroupUtilServiceImpl implements GroupUtilService {
 
         // 交还人工判断
         return "{}";
+    }
+
+    JedisPool jedisPool;
+
+    @Autowired
+    public void setJedisPool(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
+
+    private void storeMsgInfos(String msgId,String msg,String userId, int dbNum,long expirationTimeInSeconds) {
+        Jedis jedis = jedisPool.getResource();
+        // 选择数据库
+        jedis.select(dbNum);
+
+        // 使用哈希表存储关联数据
+        jedis.hset("message-data", msgId, msg + "^##" + userId);
+
+        jedis.expire("message-data", expirationTimeInSeconds);
+
+        jedis.close();
+    }
+
+    private String[] getMsgInfo(String msgId, int dbNum) {
+        Jedis jedis = jedisPool.getResource();
+        // 选择数据库
+        jedis.select(dbNum);
+
+        // 从哈希表中获取关联数据
+        String userData = jedis.hget("message-data", msgId);
+
+        jedis.close();
+
+        if (userData != null) {
+            return userData.split("^##");// 第一个是消息内容，第二个是发消息者的QQ号
+        } else {
+            return null; // 返回null
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public void groupMsgStore(MessageUniversalReport event){
+        String msgId= String.valueOf(event.getMessageId());
+        String msg=event.getRawMessage();
+        String userId= String.valueOf(event.getUserId());
+
+        storeMsgInfos(msgId,msg, userId,3,120L);
+    }
+
+    @DubboReference
+    CheckCardService checkCardService;
+
+    @SneakyThrows
+    @Override
+    public String groupRecallHandler(NoticeUniversalReport event) {
+        Config conf = ConfigFactory.load("ServiceSetting");
+
+        Config settings= conf.getConfig("RecallSetting");
+
+        if(!settings.getBoolean("flag")){
+            return null;
+        }
+
+        log.info("已进入处理例程，event：{}", event);
+
+        String operatorId = String.valueOf(event.getOperatorId());
+        String groupId = String.valueOf(event.getGroupId());
+        String msgId = String.valueOf(event.getMessageId());
+
+        var data = getMsgInfo(msgId, 3);
+        String userId = null;
+        String msg = null;
+        if (data != null) {
+            msg = data[0];
+            userId = data[1];
+        }
+        System.out.printf("收到群（%s）的消息撤回事件——操作者：%s，消息所有者：%s，被撤回消息：%s%n", groupId, operatorId, userId, msg);
+
+        if(settings.getBoolean("forEveryone")) {
+            antiRecall(settings, operatorId, userId, msg,groupId);
+        }
+        else{
+            if (userId != null && !checkCardService.isAssistants(Long.valueOf(userId))) {
+                antiRecall(settings, operatorId, userId, msg,groupId);
+            }
+        }
+
+        return null;
+    }
+
+    @Resource
+    BotGroupService botGroupService;
+
+    private void antiRecall(Config settings, String operatorId, String userId, String msg,String groupId) {
+        if (operatorId.equals(userId)) {
+            botGroupService.sendGroupMsg(Long.parseLong(groupId),String.format("[CQ:at,qq=%s] 撤回的消息是：%s", userId, msg));
+
+            Config randomConf = settings.getConfig("random");
+            int banTime = calcTime(randomConf.getString("defaultTime"));
+
+            if (randomConf.getBoolean("randomFlag")) {
+                Random random = new Random();
+                int max = calcTime(randomConf.getString("upperLimits"));
+                int min = calcTime(randomConf.getString("lowerLimits"));
+                banTime = random.nextInt(max - min + 1) + min; // 生成 [min, max] 范围内的整数
+            }
+            System.err.println(banTime);
+            botGroupService.setGroupBan(parseLong(groupId),parseLong(userId),banTime);
+        }
+    }
+
+    ;
+
+    private int calcTime(String time) {
+        var timeList = time.split(":");
+
+        int[] timeArray = new int[timeList.length];
+        for (int i = 0; i < timeList.length; i++) {
+            timeArray[i] = Integer.parseInt(timeList[i]);
+        }
+
+        int min = 60;
+        int hour = min * 60;
+
+        int result = timeArray[0] * hour + timeArray[1] * min + timeArray[2];
+
+        return result;
+    }
+
+    @Override
+    public void test(){
+        Config conf = ConfigFactory.load("ServiceSetting");
+
+        Config settings= conf.getConfig("RecallSetting");
+        Config random = settings.getConfig("random");
+        var time = calcTime(random.getString("upperLimits"));
+        System.err.println(time);
+
     }
 }

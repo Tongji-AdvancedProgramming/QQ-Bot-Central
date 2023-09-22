@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tongji.programming.DTO.cqhttp.UniversalReport;
 import org.tongji.programming.service.GatewayService;
 import org.tongji.programming.service.MessageService;
+import org.tongji.programming.service.NoticeService;
 import org.tongji.programming.service.RequestService;
 
 @Slf4j
@@ -21,6 +21,9 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Autowired
     RequestService requestService;
+
+    @Autowired
+    NoticeService noticeService;
 
     @Override
     public String handleEvent(String eventRaw) {
@@ -37,6 +40,7 @@ public class GatewayServiceImpl implements GatewayService {
                 case "request":
                     return requestService.requestEventHandler(eventRaw);
                 case "notice":
+                    return noticeService.noticeEventsHandler(eventRaw);
                 case "meta_event":
                 case "message_sent":
                 default:

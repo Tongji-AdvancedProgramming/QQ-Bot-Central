@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.mapper.StudentMapper">
+    <insert id="insertStudent">
+        INSERT INTO `Student` (`stuNo`, `major`, `name`, `courseId`, `classId`)
+        VALUES (#{student.stuNo}, #{student.major}, #{student.name}, #{student.courseId}, #{student.classId})
+    </insert>
+
+    <insert id="insertStudents">
+        INSERT INTO `Student` (`stuNo`, `major`, `name`, `courseId`, `classId`)
+        VALUES
+        <foreach collection="student" item="item" index="i" separator=",">
+            (#{item.stuNo}, #{item.major}, #{item.name}, #{item.courseId},#{item.classId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById">
+        DELETE
+        FROM `Student`
+        WHERE `stuNo` = #{id}
+          AND `courseId` = #{courseId}
+    </delete>
+
+    <delete id="deleteByClassNo">
+        DELETE
+        FROM `Student`
+        WHERE `courseId` = #{courseId}
+    </delete>
+
+    <select id="selectAll" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+    </select>
+
+    <select id="selectById" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        WHERE `stuNo` = #{id}
+          AND `courseId` = #{courseId}
+    </select>
+
+    <select id="selectWithPage" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        ORDER BY `stuNo`
+            LIMIT #{pageSize}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectWithPagByCourse" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        WHERE `courseId` = #{courseId}
+        ORDER BY `stuNo`
+            LIMIT #{pageSize}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectWithPageAndFilter" resultType="org.tongji.programming.pojo.Student">
+        SELECT *
+        FROM `Student`
+        WHERE 1 = 1
+        <if test="courseId != null and courseId != ''">AND `courseId` = #{courseId}</if>
+        <if test="classId != null and classId != ''">AND `classId` = #{classId}</if>
+        <if test="startStuNo != null and startStuNo != ''">AND `stuNo` &gt;= #{startStuNo}</if>
+        <if test="endStuNo != null and endStuNo != ''">AND `stuNo` &lt;= #{endStuNo}</if>
+        ORDER BY `stuNo`
+        LIMIT #{pageSize}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectWithPageAndFilterCount" resultType="java.lang.Long">
+        SELECT count(*)
+        FROM `Student`
+        WHERE 1 = 1
+        <if test="courseId != null and courseId != ''">AND `courseId` = #{courseId}</if>
+        <if test="classId != null and classId != ''">AND `classId` = #{classId}</if>
+        <if test="startStuNo != null and startStuNo != ''">AND `stuNo` &gt;= #{startStuNo}</if>
+        <if test="endStuNo != null and endStuNo != ''">AND `stuNo` &lt;= #{endStuNo}</if>
+    </select>
+</mapper>

@@ -7,6 +7,7 @@ import org.tongji.programming.annotations.CommandMapper.*;
 import org.tongji.programming.enums.GroupLevel;
 import org.tongji.programming.service.DemoService;
 import org.tongji.programming.service.CheckCardService;
+import org.tongji.programming.service.GroupUtilService;
 
 @Component
 @CommandController("chiaki")
@@ -46,6 +47,15 @@ public class ChiakiController {
     @CommandMapping("update")
     public String updateAssistants(MessageUniversalReport event){
         return checkCardService.addAssistants();
+    }
+
+    @DubboReference
+    GroupUtilService groupUtilService;
+
+    @CommandMapping("test")
+    public String test(MessageUniversalReport event){
+        groupUtilService.test();
+        return  null;
     }
 
 }

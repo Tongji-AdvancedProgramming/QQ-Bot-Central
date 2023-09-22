@@ -39,6 +39,12 @@ public class GroupController {
         this.botSelfService = botSelfService;
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public APIResponse getAll(){
+        var groups = qqGroupMapper.selectAll();
+        return APIDataResponse.Success(groups);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public APIResponse getById(@PathVariable String id) {
         var group = qqGroupMapper.selectById(id);

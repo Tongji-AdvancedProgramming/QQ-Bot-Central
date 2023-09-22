@@ -8,7 +8,7 @@
         <id column="id" property="id"/>
         <result column="name" property="name"/>
         <collection property="groups" ofType="string">
-            <id column="gc.groupId"/>
+            <id column="QG.id"/>
         </collection>
     </resultMap>
 
@@ -32,15 +32,9 @@
 
     <select id="selectAllWithGroupId" resultType="org.tongji.programming.pojo.Course" resultMap="CourseWithGroupIds">
         SELECT Course.*,
-               gc.groupId
+               QG.id
         FROM Course
-                 LEFT JOIN bot.group_course gc on Course.id = gc.courseId
-    </select>
-
-    <select id="selectCourseIdByGroupId" resultType="java.lang.String">
-        SELECT courseId
-        FROM group_course
-        WHERE groupId = #{groupId}
+                 LEFT JOIN bot.QQGroup QG on Course.id = QG.courseId
     </select>
 
     <delete id="deleteById">

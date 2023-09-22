@@ -1,16 +1,15 @@
 package org.tongji.programming.impl;
 
 import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.annotations.CommandMapper;
-import org.tongji.programming.enums.GroupLevel;
 import org.tongji.programming.helper.JSONHelper;
 import org.tongji.programming.service.DemoService;
+import org.tongji.programming.service.GroupUtilService;
 import org.tongji.programming.service.MessageService;
 import lombok.var;
 import org.tongji.programming.service.RestrictLevelService;
@@ -20,6 +19,9 @@ public class MessageServiceImpl implements MessageService {
 
     @DubboReference
     DemoService demoService;
+
+    @DubboReference
+    GroupUtilService groupUtilService;
 
     @Autowired
     CommandMapper commandMapper;
@@ -34,6 +36,8 @@ public class MessageServiceImpl implements MessageService {
         try {
             var mapper = JSONHelper.getLossyMapper();
             var event = mapper.readValue(eventRaw, MessageUniversalReport.class);
+
+            groupUtilService.groupMsgStore(event);
 
             /*
              * 从这里开始，你可以加入你的处理逻辑

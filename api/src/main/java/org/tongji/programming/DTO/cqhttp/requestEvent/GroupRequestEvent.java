@@ -6,13 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GroupRequestEvent extends RequestEventUniversal implements Serializable {
+public class GroupRequestEvent extends RequestEventUniversal {
     @JsonProperty("sub_type")
     private String subType;
 
