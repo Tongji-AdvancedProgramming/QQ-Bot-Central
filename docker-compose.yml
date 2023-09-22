@@ -22,7 +22,6 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
-
   demo:
     build:
       context: ./services/demoservice-sayhelloworld
@@ -32,6 +31,10 @@ services:
       - "9901:9901"
     networks:
       - botnet
+    environment:
+      - bot_je_password=${bot_je_password}
+    volumes:
+      - ${bot_config}:/root/config.ini
     extra_hosts:
       - host.docker.internal:host-gateway
 
@@ -44,6 +47,10 @@ services:
       - "9905:9905"
     networks:
       - botnet
+    environment:
+      - bot_je_password=${bot_je_password}
+    volumes:
+      - ${bot_config}:/root/config.ini
     extra_hosts:
       - host.docker.internal:host-gateway
 
@@ -56,6 +63,10 @@ services:
       - "9902:9902"
     networks:
       - botnet
+    environment:
+      - bot_je_password=${bot_je_password}
+    volumes:
+      - ${bot_config}:/root/config.ini
     extra_hosts:
       - host.docker.internal:host-gateway
 
@@ -68,6 +79,10 @@ services:
       - "9906:9906"
     networks:
       - botnet
+    environment:
+      - bot_je_password=${bot_je_password}
+    volumes:
+      - ${bot_config}:/root/config.ini
     extra_hosts:
       - host.docker.internal:host-gateway
 
@@ -80,6 +95,10 @@ services:
       - "9904:9904"
     networks:
       - botnet
+    environment:
+      - bot_je_password=${bot_je_password}
+    volumes:
+      - ${bot_config}:/root/config.ini
     extra_hosts:
       - host.docker.internal:host-gateway
 

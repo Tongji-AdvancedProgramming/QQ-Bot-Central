@@ -29,3 +29,4 @@ spring:
     timeout: 2000   #连接超时
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+

@@ -35,6 +35,13 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- 配置文件提供 -->
+        <dependency>
+            <groupId>org.tongji.programming</groupId>
+            <artifactId>config-provider</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- dubbo -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>

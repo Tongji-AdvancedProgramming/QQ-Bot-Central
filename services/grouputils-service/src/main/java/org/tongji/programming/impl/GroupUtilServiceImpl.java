@@ -9,6 +9,7 @@ import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tongji.programming.ConfigProvider;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.DTO.cqhttp.NoticeUniversalReport;
 import org.tongji.programming.DTO.cqhttp.requestEvent.GroupRequestEvent;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.regex.Pattern;
 
 import static java.lang.Long.parseLong;
+
 import java.util.Random;
 
 @Slf4j
@@ -68,13 +70,16 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         // 谨慎处理：对于加群申请格式不对的，拒绝并给出理由
         var matcher = groupRequestCommentPattern.matcher(comment);
         if (!matcher.matches()) {
-            var response = GroupRequestEventResponse.builder()
-                    .approve(false).reason("加群验证消息格式错误：请按照格式填写验证信息。")
-                    .build();
-            var mapper = JSONHelper.getLossyMapper();
-            var respJson = mapper.writeValueAsString(response);
-            log.info("处理例程拒绝：{}", respJson);
-            return respJson;
+            if (configProvider.get("JoinGroup", "rejectForFormat", boolean.class)) {
+                var response = GroupRequestEventResponse.builder()
+                        .approve(false).reason("加群验证消息格式错误：请按照格式填写验证信息。")
+                        .build();
+                var mapper = JSONHelper.getLossyMapper();
+                var respJson = mapper.writeValueAsString(response);
+                log.info("处理例程拒绝：{}", respJson);
+                return respJson;
+            } else
+                return "{}";
         }
 
         // 格式正确，尝试找出学号和姓名
@@ -120,7 +125,7 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         this.jedisPool = jedisPool;
     }
 
-    private void storeMsgInfos(String msgId,String msg,String userId, int dbNum,long expirationTimeInSeconds) {
+    private void storeMsgInfos(String msgId, String msg, String userId, int dbNum, long expirationTimeInSeconds) {
         Jedis jedis = jedisPool.getResource();
         // 选择数据库
         jedis.select(dbNum);
@@ -152,29 +157,26 @@ public class GroupUtilServiceImpl implements GroupUtilService {
 
     @SneakyThrows
     @Override
-    public void groupMsgStore(MessageUniversalReport event){
-        String msgId= String.valueOf(event.getMessageId());
-        String msg=event.getRawMessage();
-        String userId= String.valueOf(event.getUserId());
+    public void groupMsgStore(MessageUniversalReport event) {
+        String msgId = String.valueOf(event.getMessageId());
+        String msg = event.getRawMessage();
+        String userId = String.valueOf(event.getUserId());
 
-        storeMsgInfos(msgId,msg, userId,3,120L);
+        storeMsgInfos(msgId, msg, userId, 3, 120L);
     }
 
     @DubboReference
     CheckCardService checkCardService;
 
+    @Autowired
+    ConfigProvider configProvider;
+
     @SneakyThrows
     @Override
     public String groupRecallHandler(NoticeUniversalReport event) {
-        Config conf = ConfigFactory.load("ServiceSetting");
-
-        Config settings= conf.getConfig("RecallSetting");
-
-        if(!settings.getBoolean("flag")){
+        if (!configProvider.get("AntiRecall", "flag", boolean.class)) {
             return null;
         }
-
-        log.info("已进入处理例程，event：{}", event);
 
         String operatorId = String.valueOf(event.getOperatorId());
         String groupId = String.valueOf(event.getGroupId());
@@ -187,14 +189,13 @@ public class GroupUtilServiceImpl implements GroupUtilService {
             msg = data[0];
             userId = data[1];
         }
-        System.out.printf("收到群（%s）的消息撤回事件——操作者：%s，消息所有者：%s，被撤回消息：%s%n", groupId, operatorId, userId, msg);
+        log.info("收到群（{}）的消息撤回事件——操作者：{}，消息所有者：{}，被撤回消息：{}", groupId, operatorId, userId, msg);
 
-        if(settings.getBoolean("forEveryone")) {
-            antiRecall(settings, operatorId, userId, msg,groupId);
-        }
-        else{
+        if (configProvider.get("AntiRecall", "forEveryone", boolean.class)) {
+            antiRecall(operatorId, userId, msg, groupId);
+        } else {
             if (userId != null && !checkCardService.isAssistants(Long.valueOf(userId))) {
-                antiRecall(settings, operatorId, userId, msg,groupId);
+                antiRecall(operatorId, userId, msg, groupId);
             }
         }
 
@@ -204,21 +205,20 @@ public class GroupUtilServiceImpl implements GroupUtilService {
     @Resource
     BotGroupService botGroupService;
 
-    private void antiRecall(Config settings, String operatorId, String userId, String msg,String groupId) {
+    private void antiRecall(String operatorId, String userId, String msg, String groupId) {
         if (operatorId.equals(userId)) {
-            botGroupService.sendGroupMsg(Long.parseLong(groupId),String.format("[CQ:at,qq=%s] 撤回的消息是：%s", userId, msg));
+            botGroupService.sendGroupMsg(Long.parseLong(groupId), String.format("[CQ:at,qq=%s] 撤回的消息是：%s", userId, msg));
 
-            Config randomConf = settings.getConfig("random");
-            int banTime = calcTime(randomConf.getString("defaultTime"));
+            int banTime = calcTime(configProvider.get("AntiRecall", "defaultTime"));
 
-            if (randomConf.getBoolean("randomFlag")) {
+            if (configProvider.get("AntiRecall", "randomFlag", boolean.class)) {
                 Random random = new Random();
-                int max = calcTime(randomConf.getString("upperLimits"));
-                int min = calcTime(randomConf.getString("lowerLimits"));
+                int max = calcTime(configProvider.get("AntiRecall", "randomUpperLimits"));
+                int min = calcTime(configProvider.get("AntiRecall", "randomLowerLimits"));
                 banTime = random.nextInt(max - min + 1) + min; // 生成 [min, max] 范围内的整数
             }
             System.err.println(banTime);
-            botGroupService.setGroupBan(parseLong(groupId),parseLong(userId),banTime);
+            botGroupService.setGroupBan(parseLong(groupId), parseLong(userId), banTime);
         }
     }
 
@@ -235,16 +235,14 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         int min = 60;
         int hour = min * 60;
 
-        int result = timeArray[0] * hour + timeArray[1] * min + timeArray[2];
-
-        return result;
+        return timeArray[0] * hour + timeArray[1] * min + timeArray[2];
     }
 
     @Override
-    public void test(){
+    public void test() {
         Config conf = ConfigFactory.load("ServiceSetting");
 
-        Config settings= conf.getConfig("RecallSetting");
+        Config settings = conf.getConfig("RecallSetting");
         Config random = settings.getConfig("random");
         var time = calcTime(random.getString("upperLimits"));
         System.err.println(time);

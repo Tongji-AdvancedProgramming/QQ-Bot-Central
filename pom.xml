@@ -21,6 +21,7 @@
         <module>api</module>
         <module>services</module>
         <module>client</module>
+        <module>config-provider</module>
     </modules>
 
     <dependencyManagement>

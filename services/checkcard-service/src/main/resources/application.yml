@@ -19,3 +19,14 @@ spring:
     url: jdbc:mysql://10.80.42.189:3306/bot?autoReconnect=true&useSSL=true
     username: dev_bot
     password: ENC(zD2v8oDS9RcurPKfq0K5VOjhZ2rCIljvhnrcaJ5o4MY=)
+  redis:
+    port: 6379 #端口号
+    password: ENC(/Kz9neFH9gcc27y1bSqd9ZgSGRqfB6fd) #输入redis数据库密码
+    host: 10.80.42.189    #输入ip地址
+    jedis:
+      pool:
+        max-idle: 6    #最大空闲数
+        max-active: 10 #最大连接数
+        min-idle: 2    #最小空闲数
+    timeout: 3000   #连接超时
+

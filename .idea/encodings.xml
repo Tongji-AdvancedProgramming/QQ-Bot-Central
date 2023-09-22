@@ -6,6 +6,8 @@
     <file url="file://$PROJECT_DIR$/client/helloworld-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/client/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-provider/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-provider/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/backstage-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/backstage-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/checkcard-service/src/main/java" charset="UTF-8" />
