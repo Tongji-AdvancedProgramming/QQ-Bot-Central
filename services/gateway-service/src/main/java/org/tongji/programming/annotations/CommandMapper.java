@@ -60,7 +60,7 @@ public class CommandMapper implements ApplicationContextAware {
                 CommandController controllerPrefix = cls.getAnnotation(CommandController.class);
                 if (controllerPrefix != null) {
                     try {
-                        Object a = cls.newInstance();
+                        Object a = cls.getDeclaredConstructor().newInstance();
                         applicationContext.getAutowireCapableBeanFactory().autowireBeanProperties(a, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
                         components.put(bean, a);
                     } catch (Exception e) {

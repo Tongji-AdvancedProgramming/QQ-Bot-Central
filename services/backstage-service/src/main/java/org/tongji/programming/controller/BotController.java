@@ -2,10 +2,12 @@ package org.tongji.programming.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.tongji.programming.DTO.cqhttp.cqhttp.Status;
+import org.tongji.programming.config.BackStageConfig;
 import org.tongji.programming.dto.APIDataResponse;
 import org.tongji.programming.dto.APIResponse;
 import org.tongji.programming.dto.BotService.BotStatus;
@@ -80,5 +82,13 @@ public class BotController {
         result.setStatus("正常");
         result.setType("ok");
         return APIDataResponse.Success(result);
+    }
+
+    @Autowired
+    BackStageConfig backStageConfig;
+
+    @RequestMapping(value = "/msg",method = RequestMethod.GET)
+    public String getMessage(){
+        return backStageConfig.getTestMessage();
     }
 }

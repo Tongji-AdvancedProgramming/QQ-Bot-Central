@@ -7,19 +7,28 @@ import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tongji.programming.base.IniRefreshManager;
 import org.tongji.programming.config.ConfigProviderConfiguration;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 配置提供
+ */
 @Slf4j
 @Component
 public class ConfigProvider {
     JedisPool jedisPool;
+    Jedis jedis = null;
 
     @Autowired
     public void setJedisPool(JedisPool jedisPool) {
@@ -33,7 +42,12 @@ public class ConfigProvider {
         this.configuration = configuration;
     }
 
-    Jedis jedis = null;
+    IniRefreshManager iniRefreshManager;
+
+    @Autowired
+    public void setIniRefreshManager(IniRefreshManager iniRefreshManager) {
+        this.iniRefreshManager = iniRefreshManager;
+    }
 
     /**
      * 刷新配置项内容
@@ -45,29 +59,42 @@ public class ConfigProvider {
             throw new RuntimeException("必须提供配置项的位置（位于配置项bot-config.file）");
         }
 
-        Wini ini;
-        try {
-            ini = new Wini(new File(iniPath));
-        } catch (InvalidFileFormatException e) {
-            throw new RuntimeException("提供的配置文件格式不正确：" + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var db = configuration.getRedis().getDb();
 
-        if (jedis == null) {
-            jedis = jedisPool.getResource();
-            jedis.select(configuration.getRedis().getDb());
-        }
-
-        ini.forEach(((s, section) -> {
-            Map<String, String> sectionMap = new HashMap<>(section);
-            jedis.hset(s, sectionMap);
-        }));
+        iniRefreshManager.refreshConfig(iniPath, db);
     }
 
     @PostConstruct
     public void init() {
         refreshData();
+    }
+
+    /**
+     * 将文本形式的配置项转换为值（一般人用不到）
+     * @param value 配置项文本
+     * @param clazz 类
+     * @return 值
+     * @param <T> 不是基础类型的类
+     */
+    public static <T> T convertValueToClass(String value, Class<T> clazz){
+        if (clazz == String.class)
+            return clazz.cast(value);
+        else if (clazz == Integer.class || clazz == int.class)
+            return clazz.cast(Integer.parseInt(value));
+        else if (clazz == Long.class || clazz == long.class)
+            return clazz.cast(Long.parseLong(value));
+        else if (clazz == Short.class || clazz == short.class)
+            return clazz.cast(Short.parseShort(value));
+        else if (clazz == Float.class || clazz == float.class)
+            return clazz.cast(Float.parseFloat(value));
+        else if (clazz == Double.class || clazz == double.class)
+            return clazz.cast(Double.parseDouble(value));
+        else if (clazz == Boolean.class || clazz == boolean.class)
+            return clazz.cast(Boolean.parseBoolean(value));
+        else if (clazz == Date.class)
+            return clazz.cast(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").parse(value));
+        else
+            throw new RuntimeException(String.format("类型%s不支持读取和转换QAQ", clazz.getName()));
     }
 
     /**
@@ -92,24 +119,31 @@ public class ConfigProvider {
      * @param sectionName 配置类名称
      * @param fieldName   配置项名称
      * @param clazz       类型
-     * @return 配置内容（若不存在则为null）
+     * @return 配置内容（若不存在则为null，如果传入的是基本类型会NullPointerError）
      */
-    public <T extends Serializable> T get(String sectionName, String fieldName, Class<T> clazz) {
+    public <T> T get(String sectionName, String fieldName, Class<T> clazz) {
         if (jedis == null) {
             jedis = jedisPool.getResource();
             jedis.select(configuration.getRedis().getDb());
         }
 
         var result = jedis.hget(sectionName, fieldName);
-        if (clazz == String.class)
-            return clazz.cast(result);
-        else if (clazz == Integer.class || clazz == int.class)
-            return clazz.cast(Integer.parseInt(result));
-        else if (clazz == Double.class || clazz == double.class)
-            return clazz.cast(Double.parseDouble(result));
-        else if (clazz == Boolean.class || clazz == boolean.class)
-            return clazz.cast(Boolean.parseBoolean(result));
+        if (result == null) return null;
 
-        return JSON.parseObject(result, clazz);
+        return convertValueToClass(result,clazz);
+    }
+
+    /**
+     * 获取上一次更新配置文件的时间
+     * @return 获取上一次更新配置文件的时间
+     */
+    public long getUpdateTime(){
+        if (jedis == null) {
+            jedis = jedisPool.getResource();
+            jedis.select(configuration.getRedis().getDb());
+        }
+
+        var result = jedis.get("conf-lastUpdate");
+        return Long.parseLong(result);
     }
 }
