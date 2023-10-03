@@ -138,6 +138,27 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         jedis.close();
     }
 
+    private void storeSingleMsg(String msg,int dbNum){
+        Jedis jedis = jedisPool.getResource();
+        // 选择数据库
+        jedis.select(dbNum);
+
+        jedis.set("LatestMsg", msg);
+
+        jedis.close();
+    }
+
+    private String getSingleMsg(int dbNum){
+        Jedis jedis = jedisPool.getResource();
+        // 选择数据库
+        jedis.select(dbNum);
+
+        String Msg = jedis.get("LatestMsg");
+
+        jedis.close();
+        return Msg;
+    }
+
     private String[] getMsgInfo(String msgId, int dbNum) {
         Jedis jedis = jedisPool.getResource();
         // 选择数据库
@@ -238,6 +259,69 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         return timeArray[0] * hour + timeArray[1] * min + timeArray[2];
     }
 
+    private int count=1;
+    @SneakyThrows
+    @Override
+    public String groupRepeatHandler(MessageUniversalReport event){
+        if(!configProvider.get("AntiRepeat","flag",Boolean.class))
+            return null;
+        else{
+            Integer repeatTimes = configProvider.get("AntiRepeat","repeatTimes",Integer.class);
+            var msg = event.getRawMessage();
+            var userId = event.getUserId();
+            Long msgId= (long) event.getMessageId();
+            var groupId=event.getGroupId();
+            var latestMsg=getSingleMsg(4);
+
+            if(msg.equals(latestMsg))
+                count++;
+            else
+                count=1;
+            System.err.println(latestMsg+"---"+msg);
+            System.err.println(count);
+            storeSingleMsg(msg,4);
+            if(count>=repeatTimes)
+                antiRepeat(userId, msgId,groupId);
+        }
+        return null;
+    }
+
+    private void antiRepeat(Long userId,Long msgId,Long groupId){
+        //System.err.println("防复读功能生效");
+        var isassistants = checkCardService.isAssistants(userId);
+        if(!configProvider.get("AntiRepeat","forEveryone",Boolean.class)){
+            //System.err.println(isassistants);
+            if(isassistants) {
+                var specialReply = configProvider.get("AntiRepeat","specialReply");
+                if(specialReply!=null)
+                    botGroupService.sendGroupMsg(groupId,specialReply);
+                return;
+            }
+            else{
+                if(configProvider.get("AntiRepeat","recallMsgFlag",Boolean.class))
+                    botGroupService.deleteMsg(groupId,msgId);
+                var replyMsg=configProvider.get("AntiRepeat","replyMsg");
+                //System.err.println(replyMsg);
+                if(replyMsg!=null)
+                    botGroupService.sendGroupMsg(groupId,replyMsg);
+            }
+        }
+        int banTime = calcTime(configProvider.get("AntiRepeat", "defaultTime"));
+
+        if (configProvider.get("AntiRepeat", "randomFlag", Boolean.class)) {
+            Random random = new Random();
+            int max = calcTime(configProvider.get("AntiRepeat", "randomUpperLimits"));
+            int min = calcTime(configProvider.get("AntiRepeat", "randomLowerLimits"));
+            banTime = random.nextInt(max - min + 1) + min; // 生成 [min, max] 范围内的整数
+        }
+        System.err.println(banTime);
+        if(banTime!=0){
+            //System.err.println("banTime="+banTime);
+            botGroupService.setGroupBan(groupId, userId, banTime);
+        }
+
+    }
+
     @Override
     public void test() {
         Config conf = ConfigFactory.load("ServiceSetting");
@@ -248,4 +332,5 @@ public class GroupUtilServiceImpl implements GroupUtilService {
         System.err.println(time);
 
     }
+
 }

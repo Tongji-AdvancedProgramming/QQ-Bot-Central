@@ -50,6 +50,11 @@
             <artifactId>fastjson2</artifactId>
             <version>2.0.40</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

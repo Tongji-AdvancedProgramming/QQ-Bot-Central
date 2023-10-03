@@ -38,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
             var event = mapper.readValue(eventRaw, MessageUniversalReport.class);
 
             groupUtilService.groupMsgStore(event);
-
+            groupUtilService.groupRepeatHandler(event);
             /*
              * 从这里开始，你可以加入你的处理逻辑
              * （例如，判断某种情况发生时，调用你的service）

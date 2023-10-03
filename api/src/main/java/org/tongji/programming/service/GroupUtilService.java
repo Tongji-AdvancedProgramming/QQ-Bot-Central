@@ -14,5 +14,8 @@ public interface GroupUtilService {
 
     String groupRecallHandler(NoticeUniversalReport event);
 
+    @SneakyThrows
+    String groupRepeatHandler(MessageUniversalReport event);
+
     void test();
 }

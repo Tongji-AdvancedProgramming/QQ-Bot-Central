@@ -6,6 +6,7 @@ import lombok.var;
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Wini;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Component;
 import org.tongji.programming.base.IniRefreshManager;
 import org.tongji.programming.config.ConfigProviderConfiguration;
@@ -128,6 +129,8 @@ public class ConfigProvider {
         }
 
         var result = jedis.hget(sectionName, fieldName);
+        //System.err.println(fieldName+":"+result);
+
         if (result == null) return null;
 
         return convertValueToClass(result,clazz);
