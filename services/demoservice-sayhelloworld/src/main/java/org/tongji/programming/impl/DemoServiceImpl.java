@@ -5,6 +5,8 @@ import lombok.var;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.tongji.programming.ConfigProvider;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalReport;
 import org.tongji.programming.DTO.cqhttp.MessageUniversalResponse;
 import org.tongji.programming.helper.JSONHelper;
@@ -26,12 +28,17 @@ public class DemoServiceImpl implements DemoService {
         }
     }
 
+    @Autowired
+    ConfigProvider configProvider;
+
     @Override
     public String chiakiSayHello() {
         var mapper = JSONHelper.getLossyMapper();
         var response = new MessageUniversalResponse();
-        response.setReply("你向着名为绝望的希望微笑。");
-        response.setAtSender(true);
+
+        System.err.println(configProvider.get("AntiRecall","forEveryone"));
+        //response.setReply("你向着名为绝望的希望微笑。");
+        //response.setAtSender(true);
         try{
             return mapper.writeValueAsString(response);
         } catch (JsonProcessingException e) {

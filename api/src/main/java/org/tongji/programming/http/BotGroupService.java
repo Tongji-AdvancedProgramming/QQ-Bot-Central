@@ -68,4 +68,11 @@ public interface BotGroupService {
     @Get("http://host.docker.internal:5700/send_group_msg")
     void sendGroupMsg(@Query("group_id") long groupId, @Query("message") String msg);
 
+    /**
+     * 撤回群消息
+     * @param groupId 群号
+     * @param msgId 消息ID
+     */
+    @Get("http://host.docker.internal:5700/delete_msg")
+    void deleteMsg(@Query("group_id") long groupId, @Query("message_id") long msgId);
 }
