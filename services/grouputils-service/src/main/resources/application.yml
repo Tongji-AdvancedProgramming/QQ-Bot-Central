@@ -11,6 +11,8 @@ server:
   port: 9906
 zookeeper:
   address: zookeeper
+mybatis:
+  mapper-locations: classpath:Mapper/*.xml
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,5 +31,6 @@ spring:
     timeout: 3000   #连接超时
 bot-config:
   file: bot.ini
+
 
 

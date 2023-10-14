@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.tongji.programming.mapper.ReminderMapper" >
+
+
+    <insert id="insertReminder">
+        INSERT INTO reminder (event,week, time,groupId)
+        VALUES (#{event},#{week}, #{time},'')
+        ON DUPLICATE KEY UPDATE event = event,week=values(week),time=values(time);
+
+    </insert>
+    <update id="updateGroupId">
+        UPDATE reminder
+        SET groupId = #{groupId}
+        WHERE id = (
+            SELECT subquery.id
+            FROM (SELECT id
+                  FROM reminder
+                  ORDER BY id
+                  LIMIT 1 OFFSET ${id-1}) AS subquery
+        )
+    </update>
+    <delete id="deleteById">
+        DELETE FROM reminder
+        WHERE id = (
+            SELECT subquery.id
+            FROM (SELECT id
+                  FROM reminder
+                  ORDER BY id
+                  LIMIT 1 OFFSET ${id-1}) AS subquery
+        )
+    </delete>
+    <select id="selectAll" resultType="org.tongji.programming.mapper.Reminder">
+        SELECT *
+        FROM reminder
+    </select>
+    <select id="selectById" resultType="org.tongji.programming.mapper.Reminder">
+        SELECT *
+        FROM reminder
+        WHERE id = (
+            SELECT id
+            FROM reminder
+            ORDER BY id
+            LIMIT 1 OFFSET ${id-1}
+        )
+    </select>
+</mapper>
