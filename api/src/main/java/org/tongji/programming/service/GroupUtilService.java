@@ -17,5 +17,17 @@ public interface GroupUtilService {
     @SneakyThrows
     String groupRepeatHandler(MessageUniversalReport event);
 
+    String addReminder(MessageUniversalReport event);
+
+    String addGroupId(MessageUniversalReport event);
+
+    String deleteGroupId(MessageUniversalReport event);
+
+    String deleteReminder(MessageUniversalReport event);
+
+    String selectAllReminder(MessageUniversalReport event);
+
+    String reminderHandler();
+
     void test();
 }

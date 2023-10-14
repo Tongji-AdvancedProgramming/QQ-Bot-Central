@@ -58,4 +58,21 @@ public class ChiakiController {
         return  null;
     }
 
+    @CommandMapping("添加提醒")
+    public String addReminder(MessageUniversalReport event){
+        return groupUtilService.addReminder(event);
+    };
+
+    @CommandMapping("删除提醒")
+    public String deleteReminder(MessageUniversalReport event){ return groupUtilService.deleteReminder(event); };
+
+    @CommandMapping("查询提醒列表")
+    public String getReminderList(MessageUniversalReport event){ return groupUtilService.selectAllReminder(event);};
+
+    @CommandMapping("应用提醒")
+    public String addGroupId(MessageUniversalReport event){ return groupUtilService.addGroupId(event);};
+
+    @CommandMapping("取消应用提醒")
+    public String deleteGroupId(MessageUniversalReport event){ return groupUtilService.deleteGroupId(event);};
+
 }
